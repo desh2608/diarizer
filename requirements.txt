@@ -1,4 +1,4 @@
-numpy==1.21.2
+numpy==1.19.5
 scipy==1.4.1
 sklearn==0.20.3
 numexpr==2.6.9
@@ -10,3 +10,4 @@ kaldi_io
 torch==1.6.0
 tabulate==0.8.6
 intervaltree
+lhotse==0.10.0
