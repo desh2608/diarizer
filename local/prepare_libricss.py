@@ -47,12 +47,12 @@ def main(data_dir, output_dir):
     rttm_dir.mkdir(parents=True, exist_ok=True)
 
     # Write audios
-    # logging.info("Preparing audios...")
-    # for recording in tqdm(manifests["recordings"]):
-    #     recording_id = recording.id
-    #     audio_path = audio_dir / f"{recording_id}.wav"
-    #     x = torch.tensor(recording.load_audio(channels=0))
-    #     torchaudio.save(audio_path, x, 16000)
+    logging.info("Preparing audios...")
+    for recording in tqdm(manifests["recordings"]):
+        recording_id = recording.id
+        audio_path = audio_dir / f"{recording_id}.wav"
+        x = torch.tensor(recording.load_audio(channels=0))
+        torchaudio.save(audio_path, x, 16000)
 
     # Write RTTM and VAD
     rttm_string = "SPEAKER {recording_id} 1 {start:.3f} {duration:.3f} <NA> <NA> {speaker} <NA> <NA>"
