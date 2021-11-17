@@ -1,1 +1,0 @@
-../../../AMI-diarization-setup/lists/dev.meetings.txt
