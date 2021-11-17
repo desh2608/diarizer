@@ -10,3 +10,4 @@ kaldi_io
 torch==1.6.0
 tabulate==0.8.6
 intervaltree
+lhotse==0.10.0
