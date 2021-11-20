@@ -4,7 +4,7 @@
 from pathlib import Path
 from itertools import groupby
 
-from lhotse.recipes.libricss import prepare_libricss
+from lhotse.recipes import prepare_libricss
 import lhotse
 from tqdm import tqdm
 import logging
