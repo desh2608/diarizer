@@ -163,6 +163,7 @@ if __name__ == "__main__":
         # gpu configuration
         # initialize_gpus(args) # already done in queue-freegpu.pl
         device = torch.device(device="cuda")
+        _ = torch.ones(1).to(device)  # GPU reserve variable
     else:
         device = torch.device(device="cpu")
 
