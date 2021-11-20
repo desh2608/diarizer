@@ -65,7 +65,7 @@ setup(
     name="VBx",
     version="1.1",
     packages=find_packages(),
-    url="https://github.com/fnlandini/VBx_dev",
+    url="https://github.com/desh2608/VBx",
     install_requires=[
         "numpy==1.19.5",
         "scipy==1.4.1",
@@ -79,6 +79,7 @@ setup(
         "kaldi_io",
         "tabulate==0.8.6",
         "intervaltree",
+        'spy-der@git+ssh://git@github.com/desh2608/spyder.git'
     ],
     dependency_links=[],
     license="Apache License, Version 2.0",
