@@ -50,6 +50,7 @@ from diarization_lib import (
     cos_similarity,
     twoGMMcalib_lin,
     merge_adjacent_labels,
+    get_overlapping_segments,
     mkdir_p,
 )
 from kaldi_utils import read_plda
@@ -60,7 +61,7 @@ def write_output(fp, out_labels, starts, ends):
     for label, seg_start, seg_end in zip(out_labels, starts, ends):
         fp.write(
             f"SPEAKER {file_name} 1 {seg_start:03f} {seg_end - seg_start:03f} "
-            f"<NA> <NA> {label + 1} <NA> <NA>{os.linesep}"
+            f"<NA> <NA> {int(label + 1)} <NA> <NA>{os.linesep}"
         )
 
 
@@ -92,6 +93,14 @@ if __name__ == "__main__":
         required=True,
         type=str,
         help="File with x-vector timing info (see diarization_lib.read_xvector_timing_dict)",
+    )
+    parser.add_argument(
+        "--overlap-rttm",
+        required=False,
+        type=str,
+        default=None,
+        help="RTTM output of an overlap detector. If provided, overlapping speaker assignment "
+        "will be returned.",
     )
     parser.add_argument(
         "--xvec-transform",
@@ -143,13 +152,6 @@ if __name__ == "__main__":
         help='AHC produces hard assignments of x-vetors to speakers. These are "smoothed" to soft '
         "assignments as the args.initialization for VB-HMM. This parameter controls the amount of"
         " smoothing. Not so important, high value (e.g. 10) is OK  => keeping hard assigment",
-    )
-    parser.add_argument(
-        "--output-2nd",
-        required=False,
-        type=bool,
-        default=False,
-        help="Output also second most likely speaker of VB-HMM",
     )
 
     args = parser.parse_args()
@@ -282,13 +284,18 @@ if __name__ == "__main__":
         start, end = segs_dict[file_name][1].T
 
         starts, ends, out_labels = merge_adjacent_labels(start, end, labels1st)
+
+        # Overlap assignment
+        if args.overlap_rttm and args.init.endswith("VB") and q.shape[1] > 1:
+            starts2, ends2, out_labels2 = merge_adjacent_labels(start, end, labels2nd)
+            # Keep the 2nd speaker segments which are in the overlap RTTM
+            starts2, ends2, out_labels2 = get_overlapping_segments(
+                starts2, ends2, out_labels2, args.overlap_rttm
+            )
+            starts = np.concatenate((starts, starts2))
+            ends = np.concatenate((ends, ends2))
+            out_labels = np.concatenate((out_labels, out_labels2))
+
         mkdir_p(args.out_rttm_dir)
         with open(os.path.join(args.out_rttm_dir, f"{file_name}.rttm"), "w") as fp:
             write_output(fp, out_labels, starts, ends)
-
-        if args.output_2nd and args.init.endswith("VB") and q.shape[1] > 1:
-            starts, ends, out_labels2 = merge_adjacent_labels(start, end, labels2nd)
-            output_rttm_dir = f"{args.out_rttm_dir}2nd"
-            mkdir_p(output_rttm_dir)
-            with open(os.path.join(output_rttm_dir, f"{file_name}.rttm"), "w") as fp:
-                write_output(fp, out_labels2, starts, ends)
