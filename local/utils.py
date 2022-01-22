@@ -14,3 +14,16 @@ def supervision_to_vad_segments(supervision):
             cur_segment = (min(cur_segment[0], s.start), max(cur_segment[1], s.end))
     segments.append(cur_segment)
     return segments
+
+
+def rttm_to_vad_segments(rttm_file):
+    """
+    Convert an RTTM file to a list of VAD segments (start, end).
+    """
+    segments = []
+    with open(rttm_file, "r") as f:
+        for line in f:
+            line = line.strip()
+            parts = line.split()
+            segments.append((float(parts[3]), float(parts[4])))
+    return segments

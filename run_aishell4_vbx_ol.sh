@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+stage=0
+
+. ./path.sh
+. ./utils/parse_options.sh
+
+CORPUS_DIR=/export/c01/corpora6/AISHELL-4
+DATA_DIR=data/aishell4
+EXP_DIR=exp/aishell4
+CDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+mkdir -p exp
+
+# Hyperparameters (same as AMI)
+Fa=0.4
+Fb=64
+loopP=0.65
+
+if [ ! -d $DATA_DIR ]; then
+  echo "First run run_aishell4_vbx.sh stages 0-2 and then run this script."
+  exit 1
+fi
+
+if [ $stage -le 3 ]; then
+  echo "Running overlap detection..."
+  (
+  for audio in $(ls $DATA_DIR/audios/*.wav | xargs -n 1 basename)
+  do
+    filename=$(echo "${audio}" | cut -f 1 -d '.')
+    echo ${filename} > exp/list_${filename}.txt
+
+    utils/queue.pl -l "hostname=c*" --mem 2G \
+      $EXP_DIR/log/ovl/ovl_${filename}.log \
+      python diarizer/overlap/pyannote_overlap.py \
+        --in-dir $DATA_DIR/audios \
+        --file-list exp/list_${filename}.txt \
+        --out-dir $EXP_DIR/ovl_dihard \
+        --model ovl_dihard &
+    
+    sleep 10
+  done
+  wait
+  )
+  rm exp/list_*.txt
+fi
+
+if [ $stage -le 4 ]; then
+  echo "Running VBx with Fa=$Fa, Fb=$Fb, loopP=$loopP"
+  (
+  for audio in $(ls $DATA_DIR/audios/*.wav | xargs -n 1 basename)
+  do
+    filename=$(echo "${audio}" | cut -f 1 -d '.')
+
+    # run variational bayes on top of x-vectors
+    utils/queue.pl --mem 2G $EXP_DIR/log/vbx_ovl_dihard/vb_${filename}.log \
+      python diarizer/vbx/vbhmm.py \
+          --init AHC+VB \
+          --out-rttm-dir $EXP_DIR/out \
+          --xvec-ark-file $EXP_DIR/xvec/${filename}.ark \
+          --segments-file $EXP_DIR/xvec/${filename}.seg \
+          --overlap-rttm $EXP_DIR/ovl_dihard/${filename}.rttm \
+          --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 \
+          --plda-file diarizer/models/ResNet101_16kHz/plda \
+          --threshold -0.015 \
+          --lda-dim 128 \
+          --Fa $Fa \
+          --Fb $Fb \
+          --loopP $loopP &
+  done
+  wait
+  )
+fi
+
+if [ $stage -le 5 ]; then
+  # Combine all RTTM files and score
+  cat $DATA_DIR/rttm/*.rttm > $EXP_DIR/ref.rttm
+  cat $EXP_DIR/out/*.rttm > $EXP_DIR/hyp.rttm
+  LC_ALL= spyder --per-file $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
+fi
+
+exit 0
