@@ -16,7 +16,7 @@ if [ $stage -le 0 ]; then
   utils/queue.pl -l "hostname=c*" --mem 2G $EXP_DIR/log/prepare.log \
     python local/prepare_aishell4.py --data-dir $CORPUS_DIR --output-dir $DATA_DIR
 fi
-exit 1
+
 if [ $stage -le 1 ]; then
   echo "Running pyannote VAD"
   (
