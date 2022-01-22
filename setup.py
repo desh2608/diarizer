@@ -14,7 +14,7 @@ from setuptools import find_packages
 import tempfile
 import zipfile
 
-MODELS_DIR = "VBx/models"
+MODELS_DIR = "diarizer/models"
 MODELS = ["ResNet101_8kHz", "ResNet101_16kHz"]
 
 
@@ -62,10 +62,10 @@ class PostInstallCommand(install):
 
 
 setup(
-    name="VBx",
-    version="1.1",
+    name="diarizer",
+    version="0.1.1",
     packages=find_packages(),
-    url="https://github.com/desh2608/VBx",
+    url="https://github.com/desh2608/diarizer",
     install_requires=[
         "numpy==1.19.5",
         "scipy==1.4.1",
@@ -79,7 +79,8 @@ setup(
         "kaldi_io",
         "tabulate==0.8.6",
         "intervaltree",
-        'spy-der@git+ssh://git@github.com/desh2608/spyder.git'
+        "spy-der==0.2.0",
+        "pyannote.audio",
     ],
     dependency_links=[],
     license="Apache License, Version 2.0",
