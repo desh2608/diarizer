@@ -9,10 +9,18 @@ additional methods such as overlap-aware spectral clustering.
 
 ### Installation
 
+We recommend installation within a virtual environment (such as Conda) so that the
+package versions are consistent. To create a new Conda environment:
+
+```
+> conda create -n diar python=3.8
+> conda activate diar
+```
+
 ```
 > git clone https://github.com/desh2608/diarizer.git
 > cd diarizer
-> pip install -e .
+> pip install -e . 
 ```
 
 ### Usage
@@ -31,7 +39,7 @@ The `--stage` parameter may be passed to restart run from a particular stage.
 
 | Method   | MS    | FA | Total   |
 |----------|-------|----|------|
-| LibriCSS |  |  |  | 
+| LibriCSS | 0.9 | 1.2 | 2.1 | 
 | AMI |  |     |  |
 | AISHELL-4 |  |    |  |
 
@@ -68,32 +76,22 @@ The `--stage` parameter may be passed to restart run from a particular stage.
 
 * VAD and Overlap detection
 
-```
-Bredin, Hervé et al. “Pyannote.Audio: Neural Building Blocks for Speaker Diarization.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7124-7128.
+> Bredin, Hervé et al. “Pyannote. Audio: Neural Building Blocks for Speaker Diarization.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7124-7128.
 
-Bredin, Hervé and Antoine Laurent. “End-to-end speaker segmentation for overlap-aware resegmentation.” ArXiv abs/2104.04045 (2021): n. pag.
-```
+> Bredin, Hervé and Antoine Laurent. “End-to-end speaker segmentation for overlap-aware resegmentation.” ArXiv abs/2104.04045 (2021): n. pag.
 
 * VBx
 
-```
-Landini, Federico et al. “Bayesian HMM clustering of x-vector sequences (VBx) in speaker diarization: theory, implementation and analysis on standard tasks.” ArXiv abs/2012.14952 (2020)
-```
+> Landini, Federico et al. “Bayesian HMM clustering of x-vector sequences (VBx) in speaker diarization: theory, implementation and analysis on standard tasks.” ArXiv abs/2012.14952 (2020)
 
 * VBx with overlaps
 
-```
-Bullock, Latané et al. “Overlap-Aware Diarization: Resegmentation Using Neural End-to-End Overlapped Speech Detection.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7114-7118.
-```
+> Bullock, Latané et al. “Overlap-Aware Diarization: Resegmentation Using Neural End-to-End Overlapped Speech Detection.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7114-7118.
 
 * Spectral clustering
 
-```
-Park, Tae Jin et al. “Auto-Tuning Spectral Clustering for Speaker Diarization Using Normalized Maximum Eigengap.” IEEE Signal Processing Letters 27 (2020): 381-385.
-```
+> Park, Tae Jin et al. “Auto-Tuning Spectral Clustering for Speaker Diarization Using Normalized Maximum Eigengap.” IEEE Signal Processing Letters 27 (2020): 381-385.
 
 * Overlap-aware spectral clustering
 
-```
-Raj, Desh et al. “Multi-Class Spectral Clustering with Overlaps for Speaker Diarization.” 2021 IEEE Spoken Language Technology Workshop (SLT) (2021): 582-589.
-```
+> Raj, Desh et al. “Multi-Class Spectral Clustering with Overlaps for Speaker Diarization.” 2021 IEEE Spoken Language Technology Workshop (SLT) (2021): 582-589.
