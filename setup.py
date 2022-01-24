@@ -15,7 +15,7 @@ import tempfile
 import zipfile
 
 MODELS_DIR = "diarizer/models"
-MODELS = ["ResNet101_8kHz", "ResNet101_16kHz"]
+MODELS = ["ResNet101_16kHz"]
 
 
 def install_scripts(directory):
@@ -69,20 +69,19 @@ setup(
     install_requires=[
         "numpy==1.19.5",
         "scipy==1.4.1",
-        "sklearn",
         "numexpr==2.6.9",
         "h5py==2.9.0",
         "fastcluster==1.2.4",
         "onnxruntime==1.4.0",
         "soundfile==0.10.2",
-        "torch==1.6.0",
+        "torch==1.10.0",
         "kaldi_io",
-        "tabulate==0.8.6",
+        "tabulate>=0.8.6",
         "intervaltree",
         "spy-der==0.2.0",
-        "pyannote.audio",
+        "scikit-learn @ git+https://github.com/desh2608/scikit-learn.git@overlap",
+        "pyannote.audio @ git+https://github.com/desh2608/pyannote-audio.git@develop",
     ],
-    dependency_links=[],
     license="Apache License, Version 2.0",
     cmdclass={"install": PostInstallCommand, "develop": PostDevelopCommand},
 )

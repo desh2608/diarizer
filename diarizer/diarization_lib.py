@@ -208,6 +208,8 @@ def get_overlapping_segments(starts, ends, labels, overlap_rttm):
             start, dur = float(parts[3]), float(parts[4])
             overlap_segs.append((start, start + dur))
     overlap_segs.sort(key=lambda x: x[0])
+    if len(overlap_segs) == 0:
+        return None, None, None
 
     orig_segs = np.c_[starts, ends, labels].tolist()
     orig_segs.sort(key=lambda x: x[0])

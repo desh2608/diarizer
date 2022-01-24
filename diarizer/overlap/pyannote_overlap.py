@@ -1,20 +1,14 @@
 #!/usr/local/env/python3
 import argparse
-import requests
-import zipfile
 from pathlib import Path
 
-from pyannote.audio.features import Pretrained as _Pretrained
-from pyannote.audio.pipeline.overlap_detection import OverlapDetection
-
-
-PYANNOTE_AUDIO_HUB_BASE_URL = (
-    "https://github.com/pyannote/pyannote-audio-hub/blob/master/models/"
-)
+from pyannote.audio.pipelines import OverlappedSpeechDetection
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="Run Pyannote overlap detection.")
+    parser = argparse.ArgumentParser(
+        description="Run Pyannote speech activity detection."
+    )
     parser.add_argument(
         "--in-dir",
         type=str,
@@ -28,49 +22,32 @@ def get_args():
     parser.add_argument(
         "--out-dir",
         type=str,
-        help="Path to the output directory where the overlap RTTM will be written.",
+        help="Path to the output directory where the label file will be written.",
+    )
+    parser.add_argument("--onset", type=float, default=0.5, help="Onset threshold.")
+    parser.add_argument("--offset", type=float, default=0.5, help="Offset threshold.")
+    parser.add_argument(
+        "--min-duration-on",
+        type=float,
+        default=0.0,
+        help="Remove speech regions shorter than that many seconds.",
     )
     parser.add_argument(
-        "--model",
-        type=str,
-        help="Path to the model to use for overlap detection.",
-        default="ovl_dihard",
-    )
-    parser.add_argument(
-        "--exp-dir",
-        type=str,
-        help="Path to save Pyannote models.",
-        default="exp/pyannote",
+        "--min-duration-off",
+        type=float,
+        default=0.0,
+        help="Fill non-speech regions shorter than that many seconds.",
     )
     return parser.parse_args()
 
 
-def main(in_dir, files, out_dir, exp_dir, model):
+def main(in_dir, files, out_dir, HYPER_PARAMETERS):
     out_dir.mkdir(exist_ok=True, parents=True)
-    exp_dir.mkdir(exist_ok=True, parents=True)
 
-    # Download model from pyannote audio hub
-    model_url = f"{PYANNOTE_AUDIO_HUB_BASE_URL}/{model}.zip?raw=true"
-    pretrained_dir = exp_dir / model
-    if not pretrained_dir.exists():
-        r = requests.get(model_url)
-        with open(exp_dir / f"{model}.zip", "wb") as f:
-            f.write(r.content)
-
-        # Unzip model
-        with zipfile.ZipFile(exp_dir / f"{model}.zip") as z:
-            z.extractall(exp_dir / model)
-
-    # Load model
-    (params_yml,) = pretrained_dir.rglob("params.yml")
-    pretrained = _Pretrained(
-        validate_dir=params_yml.parent,
-        duration=None,
-        step=0.25,
-        batch_size=128,
-        device="cpu",
+    ovl_pipeline = OverlappedSpeechDetection(
+        segmentation="pyannote/segmentation", device="cpu"
     )
-    ovl_pipeline = OverlapDetection(scores=pretrained).load_params(params_yml)
+    ovl_pipeline.instantiate(HYPER_PARAMETERS)
 
     for file in in_dir.rglob("*.wav"):
         file_id = file.stem
@@ -87,6 +64,12 @@ if __name__ == "__main__":
     with open(args.file_list) as f:
         files = [line.strip() for line in f]
     out_dir = Path(args.out_dir)
-    exp_dir = Path(args.exp_dir)
 
-    main(in_dir, files, out_dir, exp_dir, args.model)
+    HYPER_PARAMETERS = {
+        "onset": args.onset,
+        "offset": args.offset,
+        "min_duration_on": args.min_duration_on,
+        "min_duration_off": args.min_duration_off,
+    }
+
+    main(in_dir, files, out_dir, HYPER_PARAMETERS)

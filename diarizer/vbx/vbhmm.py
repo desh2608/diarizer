@@ -292,9 +292,10 @@ if __name__ == "__main__":
             starts2, ends2, out_labels2 = get_overlapping_segments(
                 starts2, ends2, out_labels2, args.overlap_rttm
             )
-            starts = np.concatenate((starts, starts2))
-            ends = np.concatenate((ends, ends2))
-            out_labels = np.concatenate((out_labels, out_labels2))
+            if starts2 is not None:
+                starts = np.concatenate((starts, starts2))
+                ends = np.concatenate((ends, ends2))
+                out_labels = np.concatenate((out_labels, out_labels2))
 
         mkdir_p(args.out_rttm_dir)
         with open(os.path.join(args.out_rttm_dir, f"{file_name}.rttm"), "w") as fp:
