@@ -100,36 +100,40 @@ if [ $stage -le 3 ]; then
 fi
 
 if [ $stage -le 4 ]; then
-  echo "Running VBx with Fa=$Fa, Fb=$Fb, loopP=$loopP"
-  (
-  for audio in $(ls $DATA_DIR/audios/*.wav | xargs -n 1 basename)
-  do
-    filename=$(echo "${audio}" | cut -f 1 -d '.')
+  for part in dev test; do
+    echo "Running VBx on ${part} with Fa=$Fa, Fb=$Fb, loopP=$loopP"
+    (
+    for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
+    do
+      filename=$(echo "${audio}" | cut -f 1 -d '.')
 
-    # run variational bayes on top of x-vectors
-    utils/queue.pl --mem 2G $EXP_DIR/log/vbx/vb_${filename}.log \
-      python diarizer/vbx/vbhmm.py \
-          --init AHC+VB \
-          --out-rttm-dir $EXP_DIR/out \
-          --xvec-ark-file $EXP_DIR/xvec/${filename}.ark \
-          --segments-file $EXP_DIR/xvec/${filename}.seg \
-          --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 \
-          --plda-file diarizer/models/ResNet101_16kHz/plda \
-          --threshold -0.015 \
-          --lda-dim 128 \
-          --Fa $Fa \
-          --Fb $Fb \
-          --loopP $loopP &
+      # run variational bayes on top of x-vectors
+      utils/queue.pl --mem 2G $EXP_DIR/${part}/log/vbx/vb_${filename}.log \
+        python diarizer/vbx/vbhmm.py \
+            --init AHC+VB \
+            --out-rttm-dir $EXP_DIR/${part}/vbx \
+            --xvec-ark-file $EXP_DIR/${part}/xvec/${filename}.ark \
+            --segments-file $EXP_DIR/${part}/xvec/${filename}.seg \
+            --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 \
+            --plda-file diarizer/models/ResNet101_16kHz/plda \
+            --threshold -0.015 \
+            --lda-dim 128 \
+            --Fa $Fa \
+            --Fb $Fb \
+            --loopP $loopP &
+    done
+    wait
+    )
   done
-  wait
-  )
 fi
 
 if [ $stage -le 5 ]; then
   # Combine all RTTM files and score
-  cat $DATA_DIR/rttm/*.rttm > $EXP_DIR/ref.rttm
-  cat $EXP_DIR/out/*.rttm > $EXP_DIR/hyp.rttm
-  LC_ALL= spyder $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
+  for part in dev test; do
+    cat $DATA_DIR/${part}/rttm/*.rttm > $EXP_DIR/ref.rttm
+    cat $EXP_DIR/${part}/vbx/*.rttm > $EXP_DIR/hyp.rttm
+    LC_ALL= spyder --per-file $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
+  done
 fi
 
 exit 0

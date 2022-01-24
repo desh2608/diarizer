@@ -23,6 +23,10 @@ package versions are consistent. To create a new Conda environment:
 > pip install -e . 
 ```
 
+The run scripts additionally use some Kaldi utilities (such as queue.pl or parse_options.sh), 
+since we submit multiple jobs (usually 1 job per audio file). You may need to modify these
+if you are running in a different environment.
+
 ### Usage
 
 End-to-end runnable scripts are provided in the `scripts` directory. You can run them as:
@@ -45,13 +49,15 @@ The `--stage` parameter may be passed to restart run from a particular stage.
 
 2. Speaker diarization (using above VAD)
 
+The following is evaluated using the [spyder](https://github.com/desh2608/spyder) package without ignoring overlaps and using a 0.0 collar.
+
 * LibriCSS
 
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
-| VBx |  |  |  | |
+| VBx | 10.37 | 1.19 | 2.96 | 14.52 |
 | VBx + OVL |  |  |   |  |
-| Spectral |  |  |   |  |
+| Spectral | 10.37 | 1.19 | 3.37 | 14.93 |
 | Spectral + OVL |  |  |   |  |
 
 * AMI
