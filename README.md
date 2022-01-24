@@ -25,7 +25,13 @@ package versions are consistent. To create a new Conda environment:
 
 The run scripts additionally use some Kaldi utilities (such as queue.pl or parse_options.sh), 
 since we submit multiple jobs (usually 1 job per audio file). You may need to modify these
-if you are running in a different environment.
+if you are running in a different environment. Alternatively, if you have Kaldi somewhere, 
+you can make a symbolic link to the utils folder as:
+
+```
+> KALDI_ROOT=/path/to/kaldi
+> ln -s $KALDI_ROOT/egs/wsj/s5/utils .
+```
 
 ### Usage
 
@@ -56,9 +62,9 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
 | VBx | 10.37 | 1.19 | 2.96 | 14.52 |
-| VBx + OVL |  |  |   |  |
+| VBx + OVL | 3.39 | 2.31 | 5.55 | 11.25 |
 | Spectral | 10.37 | 1.19 | 3.37 | 14.93 |
-| Spectral + OVL |  |  |   |  |
+| Spectral + OVL | 3.79 | 2.22 | 5.33 | 11.34 |
 
 * AMI
 
