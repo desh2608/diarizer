@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # This script requires the BUT AMI setup for data preparation. Please run:
-# git clone https://github.com/BUTSpeechFIT/AMI-diarization-setup.git
+# 
 # before running this script.
 stage=0
 
@@ -13,9 +13,20 @@ EXP_DIR=exp/ami
 
 mkdir -p exp
 
+# VAD Hyperparameters (tuned on dev)
+onset=0.5
+offset=0.3
+min_duration_on=0.7
+min_duration_off=0.4
+
+# Hyperparameters (from original repo)
+Fa=0.4
+Fb=64
+loopP=0.65
+
 if [ ! -d AMI-diarization-setup ]; then
-  echo "Please clone AMI-diarization-setup repo before running this script."
-  exit 1
+  echo "Cloning into AMI-diarization-setup repo (needed for reference RTTMs)."
+  git clone https://github.com/BUTSpeechFIT/AMI-diarization-setup.git
 fi
 
 if [ $stage -le 0 ]; then
@@ -23,23 +34,24 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  for split in dev test; do
-    echo "Running pyannote VAD on ${split}..."
+  for part in dev test; do
+    echo "Running pyannote VAD on ${part}..."
     (
-    for audio in $(ls $DATA_DIR/$split/audios/*.wav | xargs -n 1 basename)
+    for audio in $(ls $DATA_DIR/$part/audios/*.wav | xargs -n 1 basename)
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
       utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${split}/log/vad/vad_${filename}.log \
+        $EXP_DIR/${part}/log/vad/vad_${filename}.log \
         python diarizer/vad/pyannote_vad.py \
-          --in-dir $DATA_DIR/$split/audios \
+          --in-dir $DATA_DIR/$part/audios \
           --file-list exp/list_${filename}.txt \
-          --out-dir $EXP_DIR/$split/vad \
-          --model sad_dihard &
+          --out-dir $EXP_DIR/$part/vad \
+          --onset ${onset} --offset ${offset} \
+          --min-duration-on ${min_duration_on} \
+          --min-duration-off ${min_duration_off} & 
       
-      sleep 10
     done
     wait
     )
@@ -48,24 +60,39 @@ if [ $stage -le 1 ]; then
 fi
 
 if [ $stage -le 2 ]; then
-  for split in dev test; do
-    echo "Extracting x-vectors for ${split}..."
-    mkdir -p $EXP_DIR/$split/xvec
+  for part in dev test; do
+    echo "Evaluating ${part} VAD output"
+    cat $DATA_DIR/${part}/rttm_but/* > exp/ref.rttm
+    > exp/hyp.rttm
+    for x in $EXP_DIR/${part}/vad/*; do
+      session=$(basename $x .lab)
+      awk -v SESSION=${session} \
+        '{print "SPEAKER", SESSION, "1", $1, $2-$1, "<NA> <NA> sp <NA> <NA>"}' $x >> exp/hyp.rttm
+    done
+    ./md-eval.pl -r exp/ref.rttm -s exp/hyp.rttm |\
+      awk 'or(/MISSED SPEECH/,/FALARM SPEECH/)'
+  done
+fi
+
+if [ $stage -le 3 ]; then
+  for part in dev test; do
+    echo "Extracting x-vectors for ${part}..."
+    mkdir -p $EXP_DIR/$part/xvec
     (
-    for audio in $(ls $DATA_DIR/${split}/audios/*.wav | xargs -n 1 basename)
+    for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
       utils/retry.pl utils/queue-freegpu.pl -l "hostname=c*" --gpu 1 --mem 2G \
-        $EXP_DIR/${split}/log/xvec/xvec_${filename}.log \
+        $EXP_DIR/${part}/log/xvec/xvec_${filename}.log \
         python diarizer/xvector/predict.py \
           --gpus true \
           --in-file-list exp/list_${filename}.txt \
-          --in-lab-dir $EXP_DIR/${split}/vad \
-          --in-wav-dir $DATA_DIR/${split}/audios \
-          --out-ark-fn $EXP_DIR/${split}/xvec/${filename}.ark \
-          --out-seg-fn $EXP_DIR/${split}/xvec/${filename}.seg \
+          --in-lab-dir $EXP_DIR/${part}/vad \
+          --in-wav-dir $DATA_DIR/${part}/audios \
+          --out-ark-fn $EXP_DIR/${part}/xvec/${filename}.ark \
+          --out-seg-fn $EXP_DIR/${part}/xvec/${filename}.seg \
           --model ResNet101 \
           --weights diarizer/models/ResNet101_16kHz/nnet/raw_81.pth \
           --backend pytorch &
@@ -78,19 +105,19 @@ if [ $stage -le 2 ]; then
   done
 fi
 
-if [ $stage -le 3 ]; then
-  for split in test; do
-    echo "Running spectral clustering on $split..."
+if [ $stage -le 4 ]; then
+  for part in dev test; do
+    echo "Running spectral clustering on $part..."
     (
-    for audio in $(ls $DATA_DIR/${split}/audios/*.wav | xargs -n 1 basename)
+    for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       
-      utils/queue.pl --mem 2G -l hostname="!b03*" $EXP_DIR/$split/log/spectral/sc_${filename}.log \
+      utils/queue.pl --mem 2G -l hostname="!b03*" $EXP_DIR/$part/log/spectral/sc_${filename}.log \
         python diarizer/spectral/sclust.py \
-          --out-rttm-dir $EXP_DIR/$split/spectral \
-          --xvec-ark-file $EXP_DIR/$split/xvec/${filename}.ark \
-          --segments-file $EXP_DIR/$split/xvec/${filename}.seg \
+          --out-rttm-dir $EXP_DIR/$part/spectral \
+          --xvec-ark-file $EXP_DIR/$part/xvec/${filename}.ark \
+          --segments-file $EXP_DIR/$part/xvec/${filename}.seg \
           --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 &
     done
     wait
@@ -98,11 +125,11 @@ if [ $stage -le 3 ]; then
   done
 fi
 
-if [ $stage -le 4 ]; then
-  for split in test; do
-    echo "Evaluating $split"
-    cat $DATA_DIR/$split/rttm/*.rttm > exp/ref.rttm
-    cat $EXP_DIR/$split/spectral/*.rttm > exp/hyp.rttm
+if [ $stage -le 5 ]; then
+  for part in dev test; do
+    echo "Evaluating $part"
+    cat $DATA_DIR/$part/rttm_but/*.rttm > exp/ref.rttm
+    cat $EXP_DIR/$part/spectral/*.rttm > exp/hyp.rttm
     LC_ALL= spyder --per-file exp/ref.rttm exp/hyp.rttm
   done
 fi

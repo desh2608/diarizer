@@ -53,7 +53,7 @@ The `--stage` parameter may be passed to restart run from a particular stage.
 | Method   | MS    | FA | Total   |
 |----------|-------|----|------|
 | LibriCSS | 0.9 | 1.2 | 2.1 | 
-| AMI |  |     |  |
+| AMI | 6.7 | 3.0 | 9.7 |
 | AISHELL-4 |  |    |  |
 
 2. Speaker diarization (using above VAD)
@@ -73,9 +73,9 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
-| VBx |  |  |  | |
+| VBx | 21.42 | 3.31 | 5.31 | 30.04 |
 | VBx + OVL |  |  |   |  |
-| Spectral |  |  |   |  |
+| Spectral | 21.42 | 3.31 | 3.83 | 28.56 |
 | Spectral + OVL |  |  |   |  |
 
 * AISHELL-4
