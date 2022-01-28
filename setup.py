@@ -67,7 +67,7 @@ setup(
     packages=find_packages(),
     url="https://github.com/desh2608/diarizer",
     install_requires=[
-        "numpy==1.19.5",
+        "numpy>=1.19.5",
         "scipy==1.4.1",
         "numexpr==2.6.9",
         "h5py==2.9.0",
@@ -75,6 +75,7 @@ setup(
         "onnxruntime==1.4.0",
         "soundfile==0.10.2",
         "torch==1.10.0",
+        "numba==0.53.0",
         "kaldi_io",
         "tabulate>=0.8.6",
         "intervaltree",

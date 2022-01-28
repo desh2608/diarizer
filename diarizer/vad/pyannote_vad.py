@@ -24,6 +24,12 @@ def get_args():
         type=str,
         help="Path to the output directory where the label file will be written.",
     )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="pyannote/segmentation",
+        help="Path to the model. If not provided, we use the pretrained model from HuggingFace.",
+    )
     parser.add_argument("--onset", type=float, default=0.5, help="Onset threshold.")
     parser.add_argument("--offset", type=float, default=0.5, help="Offset threshold.")
     parser.add_argument(
@@ -45,7 +51,7 @@ def main(in_dir, files, out_dir, HYPER_PARAMETERS):
     out_dir.mkdir(exist_ok=True, parents=True)
 
     vad_pipeline = VoiceActivityDetection(
-        segmentation="pyannote/segmentation", device="cpu"
+        segmentation=args.model, device="cpu"
     )
     vad_pipeline.instantiate(HYPER_PARAMETERS)
 

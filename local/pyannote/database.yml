@@ -1,0 +1,19 @@
+Databases:
+  AMI: /export/corpora5/amicorpus/{uri}/audio/{uri}.Array1-01.wav
+
+Protocols:
+  AMI:
+    SpeakerDiarization:
+      only_words:
+        train:
+            uri: AMI-diarization-setup/lists/train.meetings.txt
+            annotation: AMI-diarization-setup/only_words/rttms/train/{uri}.rttm
+            annotated: AMI-diarization-setup/uems/train/{uri}.uem
+        development:
+            uri: AMI-diarization-setup/lists/dev.meetings.txt
+            annotation: AMI-diarization-setup/only_words/rttms/dev/{uri}.rttm
+            annotated: AMI-diarization-setup/uems/dev/{uri}.uem
+        test:
+            uri: AMI-diarization-setup/lists/test.meetings.txt
+            annotation: AMI-diarization-setup/only_words/rttms/test/{uri}.rttm
+            annotated: AMI-diarization-setup/uems/test/{uri}.uem

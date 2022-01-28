@@ -6,9 +6,7 @@ from pyannote.audio.pipelines import OverlappedSpeechDetection
 
 
 def get_args():
-    parser = argparse.ArgumentParser(
-        description="Run Pyannote speech activity detection."
-    )
+    parser = argparse.ArgumentParser(description="Run Pyannote overlap detection.")
     parser.add_argument(
         "--in-dir",
         type=str,
@@ -23,6 +21,12 @@ def get_args():
         "--out-dir",
         type=str,
         help="Path to the output directory where the label file will be written.",
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="pyannote/segmentation",
+        help="Path to the model. If not provided, we use the pretrained model from HuggingFace.",
     )
     parser.add_argument("--onset", type=float, default=0.5, help="Onset threshold.")
     parser.add_argument("--offset", type=float, default=0.5, help="Offset threshold.")
@@ -44,9 +48,7 @@ def get_args():
 def main(in_dir, files, out_dir, HYPER_PARAMETERS):
     out_dir.mkdir(exist_ok=True, parents=True)
 
-    ovl_pipeline = OverlappedSpeechDetection(
-        segmentation="pyannote/segmentation", device="cpu"
-    )
+    ovl_pipeline = OverlappedSpeechDetection(segmentation=args.model, device="cpu")
     ovl_pipeline.instantiate(HYPER_PARAMETERS)
 
     for file in in_dir.rglob("*.wav"):
