@@ -7,6 +7,7 @@ Python implementations of some clustering-based diarization systems.
 * End-to-end recipes (from unsegmented audio to evaluation) for LibriCSS, AMI, and AISHELL-4.
 * Using [Lhotse](https://github.com/lhotse-speech/lhotse) for data preparation. 
 * Using [Pyannote 2.0](https://github.com/pyannote/pyannote-audio/tree/develop) models for VAD and overlap detection.
+* Scripts for fine-tuning Pyannote models on AMI and AISHELL-4 (fine-tuned models also provided).
 * VBx and x-vector extraction from [BUT](https://github.com/BUTSpeechFIT/VBx)'s implementation.
 * [Kaldi](https://github.com/kaldi-asr/kaldi) implementation of overlap-aware spectral clustering.
 
