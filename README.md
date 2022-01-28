@@ -48,7 +48,7 @@ The `--stage` parameter may be passed to restart run from a particular stage.
 
 ### Results
 
-1. Voice activity detection (VAD) using Pyannote
+1. **Voice activity detection (VAD) using Pyannote**
 
 | Method   | MS    | FA | Total   |
 |----------|-------|----|------|
@@ -56,11 +56,11 @@ The `--stage` parameter may be passed to restart run from a particular stage.
 | AMI | 3.5 | 2.8 | 6.3 |
 | AISHELL-4 |  |    |  |
 
-2. Speaker diarization (using above VAD)
+2. **Speaker diarization (using above VAD)**
 
 The following is evaluated using the [spyder](https://github.com/desh2608/spyder) package without ignoring overlaps and using a 0.0 collar.
 
-* LibriCSS
+* **LibriCSS**
 
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
@@ -69,7 +69,7 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 | Spectral | 10.37 | 1.19 | 3.37 | 14.93 |
 | Spectral + OVL | 3.79 | 2.22 | 5.33 | 11.34 |
 
-* AMI (SDM)
+* **AMI (SDM)**
 
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
@@ -78,7 +78,7 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 | Spectral | 18.15 | 3.24 | 4.14 | 25.53 |
 | Spectral + OVL | 9.63 | 7.39 | 6.67 | 23.69 |
 
-* AISHELL-4
+* **AISHELL-4**
 
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
@@ -89,7 +89,7 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 
 ### Citations
 
-1. Datasets
+1. **Datasets**
 
 * Chen, Zhuo et al. “Continuous Speech Separation: Dataset and Analysis.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7284-7288.
 
@@ -97,24 +97,24 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 
 * Fu, Yihui et al. “AISHELL-4: An Open Source Dataset for Speech Enhancement, Separation, Recognition and Speaker Diarization in Conference Scenario.” ArXiv abs/2104.03603 (2021): n. pag.
 
-2. VAD and Overlap detection
+2. **VAD and Overlap detection**
 
 * Bredin, Hervé et al. “Pyannote. Audio: Neural Building Blocks for Speaker Diarization.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7124-7128.
 
 * Bredin, Hervé and Antoine Laurent. “End-to-end speaker segmentation for overlap-aware resegmentation.” ArXiv abs/2104.04045 (2021): n. pag.
 
-3. VBx
+3. **VBx**
 
 * Landini, Federico et al. “Bayesian HMM clustering of x-vector sequences (VBx) in speaker diarization: theory, implementation and analysis on standard tasks.” ArXiv abs/2012.14952 (2020)
 
-4. VBx with overlaps
+4. **VBx with overlaps**
 
 * Bullock, Latané et al. “Overlap-Aware Diarization: Resegmentation Using Neural End-to-End Overlapped Speech Detection.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7114-7118.
 
-5. Spectral clustering
+5. **Spectral clustering**
 
 * Park, Tae Jin et al. “Auto-Tuning Spectral Clustering for Speaker Diarization Using Normalized Maximum Eigengap.” IEEE Signal Processing Letters 27 (2020): 381-385.
 
-6. Overlap-aware spectral clustering
+6. **Overlap-aware spectral clustering**
 
 * Raj, Desh et al. “Multi-Class Spectral Clustering with Overlaps for Speaker Diarization.” 2021 IEEE Spoken Language Technology Workshop (SLT) (2021): 582-589.
