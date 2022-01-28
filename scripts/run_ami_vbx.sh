@@ -15,9 +15,9 @@ mkdir -p exp
 
 # VAD Hyperparameters (tuned on dev)
 onset=0.5
-offset=0.3
-min_duration_on=0.7
-min_duration_off=0.4
+offset=0.6
+min_duration_on=0.5
+min_duration_off=0.1
 
 # Hyperparameters (from original repo)
 Fa=0.4
@@ -43,11 +43,12 @@ if [ $stage -le 1 ]; then
       echo ${filename} > exp/list_${filename}.txt
       
       utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/vad/vad_${filename}.log \
+        $EXP_DIR/${part}/log/vad_ft/vad_${filename}.log \
         python diarizer/vad/pyannote_vad.py \
+          --model exp/pyannote/ami/lightning_logs/version_0/checkpoints/epoch=0-step=1791.ckpt \
           --in-dir $DATA_DIR/$part/audios \
           --file-list exp/list_${filename}.txt \
-          --out-dir $EXP_DIR/$part/vad \
+          --out-dir $EXP_DIR/$part/vad_ft \
           --onset ${onset} --offset ${offset} \
           --min-duration-on ${min_duration_on} \
           --min-duration-off ${min_duration_off} & 
@@ -64,7 +65,7 @@ if [ $stage -le 2 ]; then
     echo "Evaluating ${part} VAD output"
     cat $DATA_DIR/${part}/rttm_but/* > exp/ref.rttm
     > exp/hyp.rttm
-    for x in $EXP_DIR/${part}/vad/*; do
+    for x in $EXP_DIR/${part}/vad_ft/*; do
       session=$(basename $x .lab)
       awk -v SESSION=${session} \
         '{print "SPEAKER", SESSION, "1", $1, $2-$1, "<NA> <NA> sp <NA> <NA>"}' $x >> exp/hyp.rttm
@@ -89,7 +90,7 @@ if [ $stage -le 3 ]; then
         python diarizer/xvector/predict.py \
           --gpus true \
           --in-file-list exp/list_${filename}.txt \
-          --in-lab-dir $EXP_DIR/${part}/vad \
+          --in-lab-dir $EXP_DIR/${part}/vad_ft \
           --in-wav-dir $DATA_DIR/${part}/audios \
           --out-ark-fn $EXP_DIR/${part}/xvec/${filename}.ark \
           --out-seg-fn $EXP_DIR/${part}/xvec/${filename}.seg \
