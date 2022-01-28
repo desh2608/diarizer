@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# This script requires the BUT AMI setup for data preparation. Please run:
-# 
-# before running this script.
 stage=0
 
 . ./path.sh
@@ -15,14 +12,9 @@ mkdir -p exp
 
 # VAD Hyperparameters (tuned on dev)
 onset=0.5
-offset=0.3
-min_duration_on=0.7
-min_duration_off=0.4
-
-# Hyperparameters (from original repo)
-Fa=0.4
-Fb=64
-loopP=0.65
+offset=0.6
+min_duration_on=0.5
+min_duration_off=0.1
 
 if [ ! -d AMI-diarization-setup ]; then
   echo "Cloning into AMI-diarization-setup repo (needed for reference RTTMs)."
@@ -34,6 +26,16 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
+  if [ -f diarizer/models/pyannote/ami_epoch0_step1791.ckpt ]; then
+    echo "Found existing AMI pyannote segmentation model, skipping training..."
+  else
+    echo "Fine tuning pyannote segmentation model on AMI SDM..."
+    local/pyannote/train_seg_finetune.sh --DATASET AMI --EXP_DIR exp/pyannote/ami
+    cp exp/pyannote/ami/lightning_logs/version_0/checkpoints/epoch=0-step=1791.ckpt diarizer/models/pyannote/ami_epoch0_step1791.ckpt
+  fi
+fi
+
+if [ $stage -le 2 ]; then
   for part in dev test; do
     echo "Running pyannote VAD on ${part}..."
     (
@@ -43,11 +45,12 @@ if [ $stage -le 1 ]; then
       echo ${filename} > exp/list_${filename}.txt
       
       utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/vad/vad_${filename}.log \
+        $EXP_DIR/${part}/log/vad_ft/vad_${filename}.log \
         python diarizer/vad/pyannote_vad.py \
+          --model diarizer/models/pyannote/ami_epoch0_step1791.ckpt \
           --in-dir $DATA_DIR/$part/audios \
           --file-list exp/list_${filename}.txt \
-          --out-dir $EXP_DIR/$part/vad \
+          --out-dir $EXP_DIR/$part/vad_ft \
           --onset ${onset} --offset ${offset} \
           --min-duration-on ${min_duration_on} \
           --min-duration-off ${min_duration_off} & 
@@ -59,12 +62,12 @@ if [ $stage -le 1 ]; then
   done
 fi
 
-if [ $stage -le 2 ]; then
+if [ $stage -le 3 ]; then
   for part in dev test; do
     echo "Evaluating ${part} VAD output"
     cat $DATA_DIR/${part}/rttm_but/* > exp/ref.rttm
     > exp/hyp.rttm
-    for x in $EXP_DIR/${part}/vad/*; do
+    for x in $EXP_DIR/${part}/vad_ft/*; do
       session=$(basename $x .lab)
       awk -v SESSION=${session} \
         '{print "SPEAKER", SESSION, "1", $1, $2-$1, "<NA> <NA> sp <NA> <NA>"}' $x >> exp/hyp.rttm
@@ -74,7 +77,7 @@ if [ $stage -le 2 ]; then
   done
 fi
 
-if [ $stage -le 3 ]; then
+if [ $stage -le 4 ]; then
   for part in dev test; do
     echo "Extracting x-vectors for ${part}..."
     mkdir -p $EXP_DIR/$part/xvec
@@ -89,7 +92,7 @@ if [ $stage -le 3 ]; then
         python diarizer/xvector/predict.py \
           --gpus true \
           --in-file-list exp/list_${filename}.txt \
-          --in-lab-dir $EXP_DIR/${part}/vad \
+          --in-lab-dir $EXP_DIR/${part}/vad_ft \
           --in-wav-dir $DATA_DIR/${part}/audios \
           --out-ark-fn $EXP_DIR/${part}/xvec/${filename}.ark \
           --out-seg-fn $EXP_DIR/${part}/xvec/${filename}.seg \
@@ -105,7 +108,7 @@ if [ $stage -le 3 ]; then
   done
 fi
 
-if [ $stage -le 4 ]; then
+if [ $stage -le 5 ]; then
   for part in dev test; do
     echo "Running spectral clustering on $part..."
     (
@@ -125,7 +128,7 @@ if [ $stage -le 4 ]; then
   done
 fi
 
-if [ $stage -le 5 ]; then
+if [ $stage -le 6 ]; then
   for part in dev test; do
     echo "Evaluating $part"
     cat $DATA_DIR/$part/rttm_but/*.rttm > exp/ref.rttm

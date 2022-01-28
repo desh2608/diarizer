@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# This script requires the BUT AMI setup for data preparation. Please run:
-# 
-# before running this script.
 stage=0
 
 . ./path.sh
@@ -34,6 +31,16 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
+  if [ -f diarizer/models/pyannote/ami_epoch0_step1791.ckpt ]; then
+    echo "Found existing AMI pyannote segmentation model, skipping training..."
+  else
+    echo "Fine tuning pyannote segmentation model on AMI SDM..."
+    local/pyannote/train_seg_finetune.sh --DATASET AMI --EXP_DIR exp/pyannote/ami
+    cp exp/pyannote/ami/lightning_logs/version_0/checkpoints/epoch=0-step=1791.ckpt diarizer/models/pyannote/ami_epoch0_step1791.ckpt
+  fi
+fi
+
+if [ $stage -le 2 ]; then
   for part in dev test; do
     echo "Running pyannote VAD on ${part}..."
     (
@@ -45,7 +52,7 @@ if [ $stage -le 1 ]; then
       utils/queue.pl -l "hostname=c*" --mem 2G \
         $EXP_DIR/${part}/log/vad_ft/vad_${filename}.log \
         python diarizer/vad/pyannote_vad.py \
-          --model exp/pyannote/ami/lightning_logs/version_0/checkpoints/epoch=0-step=1791.ckpt \
+          --model diarizer/models/pyannote/ami_epoch0_step1791.ckpt \
           --in-dir $DATA_DIR/$part/audios \
           --file-list exp/list_${filename}.txt \
           --out-dir $EXP_DIR/$part/vad_ft \
@@ -60,7 +67,7 @@ if [ $stage -le 1 ]; then
   done
 fi
 
-if [ $stage -le 2 ]; then
+if [ $stage -le 3 ]; then
   for part in dev test; do
     echo "Evaluating ${part} VAD output"
     cat $DATA_DIR/${part}/rttm_but/* > exp/ref.rttm
@@ -75,7 +82,7 @@ if [ $stage -le 2 ]; then
   done
 fi
 
-if [ $stage -le 3 ]; then
+if [ $stage -le 4 ]; then
   for part in dev test; do
     echo "Extracting x-vectors for ${part}..."
     mkdir -p $EXP_DIR/$part/xvec
@@ -106,7 +113,7 @@ if [ $stage -le 3 ]; then
   done
 fi
 
-if [ $stage -le 4 ]; then
+if [ $stage -le 5 ]; then
   for part in dev test; do
     echo "Running VBx with Fa=$Fa, Fb=$Fb, loopP=$loopP on $part..."
     (
@@ -135,7 +142,7 @@ if [ $stage -le 4 ]; then
   done
 fi
 
-if [ $stage -le 5 ]; then
+if [ $stage -le 6 ]; then
   for part in dev test; do
     echo "Evaluating $part"
     cat $DATA_DIR/$part/rttm_but/*.rttm > exp/ref.rttm

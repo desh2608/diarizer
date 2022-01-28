@@ -43,7 +43,7 @@ def main(data_dir, output_dir):
 
     output_dir = Path(output_dir)
 
-    for split in ("dev", "test"):
+    for split in ("train", "dev", "test"):
         logging.info(f"Processing {split} split.")
 
         split_dir = output_dir / split
