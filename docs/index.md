@@ -1,5 +1,3 @@
-## diarizer
-
 ### Features
 
 * End-to-end recipes (from unsegmented audio to evaluation) for LibriCSS, AMI, and AISHELL-4.
@@ -39,44 +37,52 @@ you can make a symbolic link to the utils folder as:
 
 ### Results
 
-1. **Voice activity detection (VAD) using Pyannote**
+* **Voice activity detection (VAD) using Pyannote**
 
+<center>
 | Method   | MS    | FA | Total   |
 |----------|-------|----|------|
 | LibriCSS | 0.9 | 1.2 | 2.1 | 
 | AMI | 3.5 | 2.8 | 6.3 |
 | AISHELL-4 |  |    |  |
+</center>
 
-2. **Speaker diarization (using above VAD)**
+* **Speaker diarization (using above VAD)**
 
 The following is evaluated using the [spyder](https://github.com/desh2608/spyder) package without ignoring overlaps and using a 0.0 collar.
 
-* **LibriCSS**
+1. **LibriCSS**
 
+<center>
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
 | VBx | 10.37 | 1.19 | 2.96 | 14.52 |
 | VBx + OVL | 3.39 | 2.31 | 5.55 | 11.25 |
 | Spectral | 10.37 | 1.19 | 3.37 | 14.93 |
 | Spectral + OVL | 3.79 | 2.22 | 5.33 | 11.34 |
+</center>
 
-* **AMI (SDM)**
+2. **AMI (SDM)**
 
+<center>
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
 | VBx | 18.15 | 3.24 | 4.83 | 26.22 |
 | VBx + OVL | 9.04 | 7.70 | 8.31  | 25.05 |
 | Spectral | 18.15 | 3.24 | 4.14 | 25.53 |
 | Spectral + OVL | 9.63 | 7.39 | 6.67 | 23.69 |
+</center>
 
-* **AISHELL-4**
+3. **AISHELL-4**
 
+<center>
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
 | VBx |  |  |  | |
 | VBx + OVL |  |  |   |  |
 | Spectral |  |  |   |  |
 | Spectral + OVL |  |  |   |  |
+</center>
 
 ### Citations
 
