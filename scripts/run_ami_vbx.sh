@@ -121,7 +121,7 @@ if [ $stage -le 5 ]; then
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       
-      utils/queue.pl --mem 2G $EXP_DIR/$part/log/vbx/vb_${filename}.log \
+      utils/queue.pl --mem 2G -l "hostname=!c13*" $EXP_DIR/$part/log/vbx/vb_${filename}.log \
         python diarizer/vbx/vbhmm.py \
           --init AHC+VB \
           --out-rttm-dir $EXP_DIR/$part/vbx \
@@ -135,7 +135,6 @@ if [ $stage -le 5 ]; then
           --Fa $Fa \
           --Fb $Fb \
           --loopP $loopP &
-      sleep 10
     done
     wait
     )

@@ -1,5 +1,11 @@
 Databases:
-  AMI: /export/corpora5/amicorpus/{uri}/audio/{uri}.Array1-01.wav
+  AMI: 
+    - ../../data/ami/train/audios/{uri}.wav
+    - ../../data/ami/dev/audios/{uri}.wav
+    - ../../data/ami/test/audios/{uri}.wav
+  AISHELL-4:
+    - ../../data/aishell4/train/audios/{uri}.wav
+    - ../../data/aishell4/dev/audios/{uri}.wav
 
 Protocols:
   AMI:
@@ -17,3 +23,14 @@ Protocols:
             uri: AMI-diarization-setup/lists/test.meetings.txt
             annotation: AMI-diarization-setup/only_words/rttms/test/{uri}.rttm
             annotated: AMI-diarization-setup/uems/test/{uri}.uem
+  AISHELL-4:
+    SpeakerDiarization:
+      only_words:
+        train:
+            uri: exp/pyannote/aishell4/lists/train.meetings.txt
+            annotation: exp/pyannote/aishell4/lists/{uri}.rttm
+            annotated: exp/pyannote/aishell4/lists/{uri}.uem
+        development:
+            uri: exp/pyannote/aishell4/lists/dev.meetings.txt
+            annotation: exp/pyannote/aishell4/lists/{uri}.rttm
+            annotated: exp/pyannote/aishell4/lists/{uri}.uem

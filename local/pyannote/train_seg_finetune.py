@@ -15,7 +15,9 @@ from pyannote.audio.tasks import Segmentation
 
 def read_args():
     parser = argparse.ArgumentParser(description="Fine-tune Pyannote model on data")
-    parser.add_argument("dataset", type=str, help="Name of dataset", choices=["AMI"])
+    parser.add_argument(
+        "dataset", type=str, help="Name of dataset", choices=["AMI", "AISHELL-4"]
+    )
     parser.add_argument("exp_dir", type=str, help="Experiment directory")
     args = parser.parse_args()
     return args
@@ -37,7 +39,7 @@ if __name__ == "__main__":
 
     # Create new segmentation task for dataset
     logging.info("Creating new segmentation task")
-    seg_task = Segmentation(ami, duration=5.0, max_num_speakers=4)
+    seg_task = Segmentation(ami, duration=5.0, max_num_speakers=4, num_workers=4)
 
     # Copy pretrained model and override task
     logging.info("Copying pretrained model")
