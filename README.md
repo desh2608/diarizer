@@ -53,13 +53,11 @@ The `--stage` parameter may be passed to restart run from a particular stage.
 
 * **Voice activity detection (VAD) using Pyannote**
 
-<center>
 | Method   | MS    | FA | Total   |
 |----------|-------|----|------|
 | LibriCSS | 0.9 | 1.2 | 2.1 | 
 | AMI | 3.5 | 2.8 | 6.3 |
-| AISHELL-4 |  |    |  |
-</center>
+| AISHELL-4 | 3.3 | 2.3 | 5.6 |
 
 * **Speaker diarization (using above VAD)**
 
@@ -67,36 +65,30 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 
 1. **LibriCSS**
 
-<center>
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
 | VBx | 10.37 | 1.19 | 2.96 | 14.52 |
 | VBx + OVL | 3.39 | 2.31 | 5.55 | 11.25 |
 | Spectral | 10.37 | 1.19 | 3.37 | 14.93 |
 | Spectral + OVL | 3.79 | 2.22 | 5.33 | 11.34 |
-</center>
 
 2. **AMI (SDM)**
 
-<center>
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
 | VBx | 18.15 | 3.24 | 4.83 | 26.22 |
 | VBx + OVL | 9.04 | 7.70 | 8.31  | 25.05 |
 | Spectral | 18.15 | 3.24 | 4.14 | 25.53 |
 | Spectral + OVL | 9.63 | 7.39 | 6.67 | 23.69 |
-</center>
 
 3. **AISHELL-4**
 
-<center>
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
-| VBx |  |  |  | |
-| VBx + OVL |  |  |   |  |
-| Spectral |  |  |   |  |
-| Spectral + OVL |  |  |   |  |
-</center>
+| VBx | 8.27 | 2.80 | 6.94 | 18.01 |
+| VBx + OVL | 5.78 | 7.88 | 7.96 | 21.62 |
+| Spectral | 8.27 | 2.80 | 5.06 | 16.13 |
+| Spectral + OVL | 5.90 | 7.85 | 5.94 | 19.69 |
 
 ### Citations
 
