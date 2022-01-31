@@ -41,13 +41,12 @@ you can make a symbolic link to the utils folder as:
 
 ### Usage
 
-End-to-end runnable scripts are provided in the `scripts` directory. You can run them as:
+End-to-end runnable recipes are provided in the `scripts` directory. The scripts must be
+invoked from the root directory, for example: `scripts/ami/010_prepare_data.sh` .
 
-```
-> scripts/run_ami_spectral_ol.sh
-```
-
-The `--stage` parameter may be passed to restart run from a particular stage.
+Each recipe (LibriCSS, AMI, AISHELL-4) contains scripts broken down into stages such as:
+data preparation, VAD, x-vector extraction, overlap detection, and clustering, numbered
+in order as 010, 020, etc. These scripts are supposed to be run in order.
 
 ### Results
 

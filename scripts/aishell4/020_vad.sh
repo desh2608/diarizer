@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 stage=0
 
+# VAD Hyperparameters (tuned on dev)
+onset=0.3
+offset=0.1
+min_duration_on=0.15
+min_duration_off=0.8
+
 . ./path.sh
 . ./utils/parse_options.sh
 
@@ -10,26 +16,9 @@ EXP_DIR=exp/aishell4
 
 mkdir -p exp
 
-# VAD Hyperparameters (tuned on dev)
-onset=0.3
-offset=0.1
-min_duration_on=0.15
-min_duration_off=0.8
-
-# Hyperparameters (same as AMI)
-Fa=0.4
-Fb=64
-loopP=0.65
-
 if [ $stage -le 0 ]; then
-  echo "Preparing AISHELL-4 data..."
-  utils/queue.pl -l "hostname=c*" --mem 2G $EXP_DIR/log/prepare.log \
-    python local/prepare_aishell4.py --data-dir $CORPUS_DIR --output-dir $DATA_DIR
-fi
-
-if [ $stage -le 1 ]; then
   if [ -f diarizer/models/pyannote/aishell_epoch0_step2150.ckpt ]; then
-    echo "Found existing AMI pyannote segmentation model, skipping training..."
+    echo "Found existing AISHELL-4 pyannote segmentation model, skipping training..."
   else
     mkdir -p exp/pyannote/aishell4/lists
     for f in $DATA_DIR/{train,dev}/audios/*; do
@@ -46,7 +35,7 @@ if [ $stage -le 1 ]; then
   fi
 fi
 
-if [ $stage -le 2 ]; then
+if [ $stage -le 1 ]; then
   for part in dev test; do
     echo "Running pyannote VAD on ${part}..."
     (
@@ -73,7 +62,7 @@ if [ $stage -le 2 ]; then
   done
 fi
 
-if [ $stage -le 3 ]; then
+if [ $stage -le 2 ]; then
   echo "Onset: $onset Offset: $offset Min-duration-on: $min_duration_on Min-duration-off: $min_duration_off"
   for part in dev test; do
     echo "Evaluating ${part} VAD output"
@@ -86,66 +75,6 @@ if [ $stage -le 3 ]; then
     done
     ./md-eval.pl -r exp/ref.rttm -s exp/hyp.rttm |\
       awk 'or(/MISSED SPEECH/,/FALARM SPEECH/)'
-  done
-fi
-
-if [ $stage -le 4 ]; then
-  for part in dev test; do
-    echo "Extracting x-vectors for ${part}..."
-    mkdir -p $EXP_DIR/$part/xvec
-    (
-    for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
-    do
-      filename=$(echo "${audio}" | cut -f 1 -d '.')
-      echo ${filename} > exp/list_${filename}.txt
-      
-      utils/retry.pl utils/queue-freegpu.pl -l "hostname=c*" --gpu 1 --mem 2G \
-        $EXP_DIR/${part}/log/xvec/xvec_${filename}.log \
-        python diarizer/xvector/predict.py \
-          --gpus true \
-          --in-file-list exp/list_${filename}.txt \
-          --in-lab-dir $EXP_DIR/${part}/vad \
-          --in-wav-dir $DATA_DIR/${part}/audios \
-          --out-ark-fn $EXP_DIR/${part}/xvec/${filename}.ark \
-          --out-seg-fn $EXP_DIR/${part}/xvec/${filename}.seg \
-          --model ResNet101 \
-          --weights diarizer/models/ResNet101_16kHz/nnet/raw_81.pth \
-          --backend pytorch &
-      
-      sleep 10
-    done
-    wait
-    )
-    rm exp/list_*
-  done
-fi
-
-if [ $stage -le 5 ]; then
-  for part in dev test; do
-    echo "Running spectral clustering on $part..."
-    (
-    for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
-    do
-      filename=$(echo "${audio}" | cut -f 1 -d '.')
-      
-      utils/queue.pl --mem 2G -l hostname="!c13*" $EXP_DIR/$part/log/spectral/sc_${filename}.log \
-        python diarizer/spectral/sclust.py \
-          --out-rttm-dir $EXP_DIR/$part/spectral \
-          --xvec-ark-file $EXP_DIR/$part/xvec/${filename}.ark \
-          --segments-file $EXP_DIR/$part/xvec/${filename}.seg \
-          --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 &
-    done
-    wait
-    )
-  done
-fi
-
-if [ $stage -le 6 ]; then
-  for part in dev test; do
-    echo "Evaluating $part"
-    cat $DATA_DIR/$part/rttm/*.rttm > exp/ref.rttm
-    cat $EXP_DIR/$part/spectral/*.rttm > exp/hyp.rttm
-    LC_ALL= spyder --per-file exp/ref.rttm exp/hyp.rttm
   done
 fi
 
