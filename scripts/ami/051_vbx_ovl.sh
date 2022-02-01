@@ -26,9 +26,10 @@ if [ $stage -le 0 ]; then
       utils/queue.pl --mem 2G -l "hostname=!c13*" $EXP_DIR/$part/log/vbx/vb_${filename}.log \
         python diarizer/vbx/vbhmm.py \
           --init AHC+VB \
-          --out-rttm-dir $EXP_DIR/$part/vbx \
+          --out-rttm-dir $EXP_DIR/$part/vbx_ovl \
           --xvec-ark-file $EXP_DIR/$part/xvec/${filename}.ark \
           --segments-file $EXP_DIR/$part/xvec/${filename}.seg \
+          --overlap-rttm $EXP_DIR/$split/ovl/${filename}.rttm \
           --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 \
           --plda-file diarizer/models/ResNet101_16kHz/plda \
           --threshold -0.015 \
@@ -47,7 +48,7 @@ if [ $stage -le 1 ]; then
   for part in dev test; do
     echo "Evaluating $part"
     cat $DATA_DIR/$part/rttm_but/*.rttm > exp/ref.rttm
-    cat $EXP_DIR/$part/vbx/*.rttm > exp/hyp.rttm
+    cat $EXP_DIR/$part/vbx_ovl/*.rttm > exp/hyp.rttm
     LC_ALL= spyder --per-file exp/ref.rttm exp/hyp.rttm
   done
 fi
