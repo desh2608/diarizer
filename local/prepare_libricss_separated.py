@@ -1,11 +1,13 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 # Data preparation for LibriCSS dataset.
+from collections import defaultdict
 from os import sep
 from pathlib import Path
 from itertools import groupby
 
 from lhotse.recipes import prepare_libricss
+from lhotse import RecordingSet, Recording
 
 from tqdm import tqdm
 import logging
@@ -37,6 +39,22 @@ SESSIONS = {
 }
 
 
+def file_name_to_session_and_channel(file_name):
+    """
+    Extract session and channel from file name.
+    """
+    _, _, ovl, _, sil, session, _, _, channel = file_name.split("_")
+    ovl = int(float(ovl))
+    if ovl == 0:
+        if sil == "0.5":
+            session = f"0S_{session}"
+        else:
+            session = f"0L_{session}"
+    else:
+        session = f"OV{ovl}_{session}"
+    return session, int(channel)
+
+
 def get_args():
     import argparse
 
@@ -45,38 +63,60 @@ def get_args():
         "--data-dir", type=str, required=True, help="Path to LibriCSS data directory."
     )
     parser.add_argument(
+        "--separated-dir",
+        type=str,
+        required=True,
+        help="Path to directory containing separated wav files.",
+    )
+    parser.add_argument(
         "--output-dir", type=str, required=True, help="Path to output directory."
     )
     return parser.parse_args()
 
 
-def main(data_dir, out_dir):
+def main(data_dir, out_dir, separated_dir):
     manifests = prepare_libricss(data_dir)
+
+    separated_dir = Path(separated_dir)
+    separated_recordings = []
+    reco2channels = defaultdict(list)
+    for audio in separated_dir.rglob("*.wav"):
+        session, channel = file_name_to_session_and_channel(audio.stem)
+        reco2channels[session].append(f"{session}_{channel}")
+        separated_recordings.append(
+            Recording.from_file(audio, recording_id=f"{session}_{channel}")
+        )
+    manifests["separated"] = RecordingSet.from_recordings(separated_recordings)
 
     for part in ["dev", "test"]:
         output_dir = Path(out_dir) / part
         audio_dir = output_dir / "audios"
         vad_dir = output_dir / "vad"
         rttm_dir = output_dir / "rttm"
+        reco2channel_file = output_dir / "reco2channel"
+
         # Create output directories.
         audio_dir.mkdir(parents=True, exist_ok=True)
         vad_dir.mkdir(parents=True, exist_ok=True)
         rttm_dir.mkdir(parents=True, exist_ok=True)
 
+        # Write reco2channel file
+        with open(reco2channel_file, "w") as f:
+            for reco in sorted(reco2channels):
+                if any(session in reco for session in SESSIONS[part]):
+                    f.write(f"{reco} {' '.join(reco2channels[reco])}\n")
+
         # Write audios
-        logging.info(f"Preparing {part} audios...")
         for recording in tqdm(
             filter(
                 lambda r: any(session in r.id for session in SESSIONS[part]),
-                manifests["recordings"],
-            )
+                manifests["separated"],
+            ),
+            desc=f"Writing separated audios for {part}",
         ):
             recording_id = recording.id
-            if all([session not in recording_id for session in SESSIONS[part]]):
-                continue
             audio_path = audio_dir / f"{recording_id}.wav"
-            x = torch.tensor(recording.load_audio(channels=0))
-            torchaudio.save(audio_path, x, 16000)
+            audio_path.symlink_to(recording.sources[0].source)
 
         # Write RTTM and VAD
         rttm_string = "SPEAKER {recording_id} 1 {start:.3f} {duration:.3f} <NA> <NA> {speaker} <NA> <NA>"
@@ -84,8 +124,9 @@ def main(data_dir, out_dir):
             sorted(manifests["supervisions"], key=lambda seg: seg.recording_id),
             key=lambda seg: seg.recording_id,
         )
-        logging.info(f"Preparing {part} RTTM and VAD...")
-        for recording_id, supervisions in tqdm(reco_to_supervision):
+        for recording_id, supervisions in tqdm(
+            reco_to_supervision, desc=f"Writing RTTM and VAD for {part}"
+        ):
             if all([session not in recording_id for session in SESSIONS[part]]):
                 continue
             supervisions = list(supervisions)
@@ -108,4 +149,4 @@ def main(data_dir, out_dir):
 
 if __name__ == "__main__":
     args = get_args()
-    main(args.data_dir, args.output_dir)
+    main(args.data_dir, args.output_dir, args.separated_dir)
