@@ -4,13 +4,13 @@ stage=0
 . ./path.sh
 . ./utils/parse_options.sh
 
-DATA_DIR=data/libricss_separated
-EXP_DIR=exp/libricss_separated
+DATA_DIR=data/libricss_separated_oracle
+EXP_DIR=exp/libricss_separated_oracle
 
 mkdir -p exp
 
 if [ $stage -le 0 ]; then
-  for part in test; do
+  for part in dev test; do
     echo "Running spectral clustering on ${part}..."
     (
     while read -r line
@@ -28,7 +28,8 @@ if [ $stage -le 0 ]; then
             --out-rttm-dir $EXP_DIR/${part}/spectral \
             --xvec-ark-file $EXP_DIR/${part}/xvec/${filename}.ark \
             --segments-file $EXP_DIR/${part}/xvec/${filename}.seg \
-            --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 &
+            --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 \
+            --max-neighbors 30 &
     done<$DATA_DIR/${part}/reco2channel
     wait
     )
@@ -37,7 +38,7 @@ fi
 
 if [ $stage -le 1 ]; then
   # Combine all RTTM files and score
-  for part in test; do
+  for part in dev test; do
     cat $DATA_DIR/${part}/rttm/*.rttm > $EXP_DIR/ref.rttm
     cat $EXP_DIR/${part}/spectral/*.rttm > $EXP_DIR/hyp.rttm
     LC_ALL= spyder --per-file $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm

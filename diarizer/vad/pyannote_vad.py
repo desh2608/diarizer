@@ -50,9 +50,7 @@ def get_args():
 def main(in_dir, files, out_dir, HYPER_PARAMETERS):
     out_dir.mkdir(exist_ok=True, parents=True)
 
-    vad_pipeline = VoiceActivityDetection(
-        segmentation=args.model, device="cpu"
-    )
+    vad_pipeline = VoiceActivityDetection(segmentation=args.model, device="cpu")
     vad_pipeline.instantiate(HYPER_PARAMETERS)
 
     for file in in_dir.rglob("*.wav"):

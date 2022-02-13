@@ -2,18 +2,15 @@
 # -*- coding: utf-8 -*-
 # Data preparation for LibriCSS dataset.
 from collections import defaultdict
-from os import sep
 from pathlib import Path
-from itertools import groupby
+from itertools import groupby, chain
+import sys
 
 from lhotse.recipes import prepare_libricss
-from lhotse import RecordingSet, Recording
+from lhotse import RecordingSet, Recording, CutSet
 
 from tqdm import tqdm
 import logging
-
-import torch
-import torchaudio
 
 from utils import supervision_to_vad_segments
 
@@ -39,20 +36,24 @@ SESSIONS = {
 }
 
 
-def file_name_to_session_and_channel(file_name):
+def file_name_to_session_and_channel(file_name, oracle=False):
     """
     Extract session and channel from file name.
     """
-    _, _, ovl, _, sil, session, _, _, channel = file_name.split("_")
-    ovl = int(float(ovl))
-    if ovl == 0:
-        if sil == "0.5":
-            session = f"0S_{session}"
+    if not oracle:
+        _, _, ovl, _, sil, session, _, _, channel = file_name.split("_")
+        ovl = int(float(ovl))
+        if ovl == 0:
+            if sil == "0.5":
+                session = f"0S_{session}"
+            else:
+                session = f"0L_{session}"
         else:
-            session = f"0L_{session}"
+            session = f"OV{ovl}_{session}"
+        return session, int(channel)
     else:
-        session = f"OV{ovl}_{session}"
-    return session, int(channel)
+        session, channel = file_name.rsplit("_", 1)
+        return session, int(channel)
 
 
 def get_args():
@@ -71,17 +72,39 @@ def get_args():
     parser.add_argument(
         "--output-dir", type=str, required=True, help="Path to output directory."
     )
+    parser.add_argument("--oracle", dest="oracle_css", action="store_true")
     return parser.parse_args()
 
 
-def main(data_dir, out_dir, separated_dir):
-    manifests = prepare_libricss(data_dir)
-
+def main(args, data_dir, out_dir, separated_dir):
     separated_dir = Path(separated_dir)
+
+    if not separated_dir.exists():
+        from diarizer.data_utils import get_oracle_css
+
+        if not args.oracle_css:
+            logging.info(
+                "Separated directory not found. If you want to use oracle css, please set --oracle flag."
+            )
+            sys.exit(1)
+
+        logging.info(
+            "Separated directory does not exist. Creating oracle from headset mics."
+        )
+        separated_dir.mkdir(parents=True, exist_ok=True)
+        manifests = prepare_libricss(data_dir, type="ihm")
+        cuts = CutSet.from_manifests(
+            recordings=manifests["recordings"], supervisions=manifests["supervisions"]
+        ).trim_to_supervisions(keep_overlapping=False)
+        get_oracle_css(cuts, separated_dir)
+
+    manifests = prepare_libricss(data_dir, type="mdm")
     separated_recordings = []
     reco2channels = defaultdict(list)
     for audio in separated_dir.rglob("*.wav"):
-        session, channel = file_name_to_session_and_channel(audio.stem)
+        session, channel = file_name_to_session_and_channel(
+            audio.stem, oracle=args.oracle_css
+        )
         reco2channels[session].append(f"{session}_{channel}")
         separated_recordings.append(
             Recording.from_file(audio, recording_id=f"{session}_{channel}")
@@ -116,7 +139,7 @@ def main(data_dir, out_dir, separated_dir):
         ):
             recording_id = recording.id
             audio_path = audio_dir / f"{recording_id}.wav"
-            audio_path.symlink_to(recording.sources[0].source)
+            audio_path.symlink_to(Path(recording.sources[0].source).resolve())
 
         # Write RTTM and VAD
         rttm_string = "SPEAKER {recording_id} 1 {start:.3f} {duration:.3f} <NA> <NA> {speaker} <NA> <NA>"
@@ -149,4 +172,4 @@ def main(data_dir, out_dir, separated_dir):
 
 if __name__ == "__main__":
     args = get_args()
-    main(args.data_dir, args.output_dir, args.separated_dir)
+    main(args, args.data_dir, args.output_dir, args.separated_dir)
