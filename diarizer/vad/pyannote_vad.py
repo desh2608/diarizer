@@ -44,15 +44,19 @@ def get_args():
         default=0.0,
         help="Fill non-speech regions shorter than that many seconds.",
     )
+    parser.add_argument(
+        "--align-time",
+        default=None,
+        type=float,
+        help="If provided, make start and end times multiples of this value.",
+    )
     return parser.parse_args()
 
 
 def main(in_dir, files, out_dir, HYPER_PARAMETERS):
     out_dir.mkdir(exist_ok=True, parents=True)
 
-    vad_pipeline = VoiceActivityDetection(
-        segmentation=args.model, device="cpu"
-    )
+    vad_pipeline = VoiceActivityDetection(segmentation=args.model, device="cpu")
     vad_pipeline.instantiate(HYPER_PARAMETERS)
 
     for file in in_dir.rglob("*.wav"):
@@ -62,6 +66,9 @@ def main(in_dir, files, out_dir, HYPER_PARAMETERS):
         vad_out = vad_pipeline({"audio": file})
         with open(f"{out_dir}/{file_id}.lab", "w") as f:
             for start, end in vad_out.get_timeline():
+                if args.align_time is not None:
+                    start = round(start / args.align_time) * args.align_time
+                    end = round(end / args.align_time) * args.align_time
                 f.write(f"{start:.3f} {end:.3f} sp\n")
 
 
