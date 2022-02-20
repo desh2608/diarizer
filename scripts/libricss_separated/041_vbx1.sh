@@ -10,13 +10,13 @@ loopP=0.9
 . ./utils/parse_options.sh
 
 CORPUS_DIR=/export/c01/corpora6/LibriCSS
-DATA_DIR=data/libricss_separated
-EXP_DIR=exp/libricss_separated
+DATA_DIR=data/libricss_separated_oracle
+EXP_DIR=exp/libricss_separated_oracle
 
 mkdir -p exp
 
 if [ $stage -le 0 ]; then
-  for part in dev test; do
+  for part in test; do
     echo "Running VBx on ${part} with Fa=$Fa, Fb=$Fb, loopP=$loopP"
     (
     while read -r line
@@ -30,10 +30,10 @@ if [ $stage -le 0 ]; then
       cat $EXP_DIR/$part/xvec/${filename}_{0,1}.seg | awk '{print $1, substr($2, 1, length($2)-2), $3, $4}' > $EXP_DIR/$part/xvec/$filename.seg
 
       # run variational bayes on top of x-vectors
-      utils/queue.pl --mem 2G $EXP_DIR/${part}/log/vbx/vb_${filename}.log \
+      utils/queue.pl --mem 2G $EXP_DIR/${part}/log/vbx_shared/vb_${filename}.log \
         python diarizer/vbx/vbhmm2.py \
             --init AHC+VB \
-            --out-rttm-dir $EXP_DIR/${part}/vbx \
+            --out-rttm-dir $EXP_DIR/${part}/vbx_shared \
             --xvec-ark-file $EXP_DIR/${part}/xvec/${filename}.ark \
             --segments-file $EXP_DIR/${part}/xvec/${filename}.seg \
             --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 \
@@ -51,9 +51,9 @@ fi
 
 if [ $stage -le 1 ]; then
   # Combine all RTTM files and score
-  for part in dev test; do
+  for part in test; do
     cat $DATA_DIR/${part}/rttm/*.rttm > $EXP_DIR/ref.rttm
-    cat $EXP_DIR/${part}/vbx/*.rttm > $EXP_DIR/hyp.rttm
+    cat $EXP_DIR/${part}/vbx_shared/*.rttm > $EXP_DIR/hyp.rttm
     LC_ALL= spyder --per-file $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
   done
 fi
