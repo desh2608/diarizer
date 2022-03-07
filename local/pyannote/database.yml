@@ -6,6 +6,9 @@ Databases:
   AISHELL-4:
     - ../../data/aishell4/train/audios/{uri}.wav
     - ../../data/aishell4/dev/audios/{uri}.wav
+  AliMeeting:
+    - ../../data/alimeeting/train/audios/{uri}.wav
+    - ../../data/alimeeting/eval/audios/{uri}.wav
 
 Protocols:
   AMI:
@@ -34,3 +37,14 @@ Protocols:
             uri: exp/pyannote/aishell4/lists/dev.meetings.txt
             annotation: exp/pyannote/aishell4/lists/{uri}.rttm
             annotated: exp/pyannote/aishell4/lists/{uri}.uem
+  AliMeeting:
+    SpeakerDiarization:
+      only_words:
+        train:
+            uri: exp/pyannote/alimeeting/lists/train.meetings.txt
+            annotation: exp/pyannote/alimeeting/lists/{uri}.rttm
+            annotated: exp/pyannote/alimeeting/lists/{uri}.uem
+        development:
+            uri: exp/pyannote/alimeeting/lists/eval.meetings.txt
+            annotation: exp/pyannote/alimeeting/lists/{uri}.rttm
+            annotated: exp/pyannote/alimeeting/lists/{uri}.uem
