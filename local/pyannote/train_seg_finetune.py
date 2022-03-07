@@ -16,7 +16,10 @@ from pyannote.audio.tasks import Segmentation
 def read_args():
     parser = argparse.ArgumentParser(description="Fine-tune Pyannote model on data")
     parser.add_argument(
-        "dataset", type=str, help="Name of dataset", choices=["AMI", "AISHELL-4"]
+        "dataset",
+        type=str,
+        help="Name of dataset",
+        choices=["AMI", "AISHELL-4", "AliMeeting"],
     )
     parser.add_argument("exp_dir", type=str, help="Experiment directory")
     args = parser.parse_args()

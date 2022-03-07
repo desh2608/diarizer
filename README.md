@@ -4,10 +4,10 @@ Python implementations of some clustering-based diarization systems.
 
 ### Features
 
-* End-to-end recipes (from unsegmented audio to evaluation) for LibriCSS, AMI, and AISHELL-4.
+* End-to-end recipes (from unsegmented audio to evaluation) for LibriCSS, AMI, AISHELL-4, and AliMeeting.
 * Using [Lhotse](https://github.com/lhotse-speech/lhotse) for data preparation. 
 * Using [Pyannote 2.0](https://github.com/pyannote/pyannote-audio/tree/develop) models for VAD and overlap detection.
-* Scripts for fine-tuning Pyannote models on AMI and AISHELL-4 (fine-tuned models also provided).
+* Scripts for fine-tuning Pyannote models on AMI, AISHELL-4, and AliMeeting (fine-tuned models also provided).
 * VBx and x-vector extraction from [BUT](https://github.com/BUTSpeechFIT/VBx)'s implementation.
 * [Kaldi](https://github.com/kaldi-asr/kaldi) implementation of overlap-aware spectral clustering.
 
@@ -57,6 +57,7 @@ in order as 010, 020, etc. These scripts are supposed to be run in order.
 | LibriCSS | 0.9 | 1.2 | 2.1 | 
 | AMI | 3.5 | 2.8 | 6.3 |
 | AISHELL-4 | 3.3 | 2.3 | 5.6 |
+| AliMeeting | 1.9 | 1.8 | 3.7 |
 
 * **Speaker diarization (using above VAD)**
 
@@ -89,6 +90,15 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 | Spectral | 8.27 | 2.80 | 5.06 | 16.13 |
 | Spectral + OVL | 5.90 | 7.85 | 5.94 | 19.69 |
 
+4. **AliMeeting** (results are on the official Test set)
+
+| Method   | MS    | FA | Conf. | DER   |
+|----------|-------|----|-------|-------|
+| VBx | 22.09 | 1.57 | 4.27 | 27.93 |
+| VBx + OVL | 11.19 | 4.96 | 7.39 | 23.54 |
+| Spectral | 22.09 | 1.57 | 4.03 | 27.69 |
+| Spectral + OVL | 11.61 | 4.98 | 7.85 | 24.44 |
+
 ### Citations
 
 1. **Datasets**
@@ -98,6 +108,8 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 * McCowan, Iain et al. “The AMI meeting corpus.” (2005).
 
 * Fu, Yihui et al. “AISHELL-4: An Open Source Dataset for Speech Enhancement, Separation, Recognition and Speaker Diarization in Conference Scenario.” ArXiv abs/2104.03603 (2021): n. pag.
+
+* Yu, Fan et al. “M2MeT: The ICASSP 2022 Multi-Channel Multi-Party Meeting Transcription Challenge.” ArXiv abs/2110.07393 (2021).
 
 2. **VAD and Overlap detection**
 
