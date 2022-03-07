@@ -39,19 +39,31 @@ SESSIONS = {
 }
 
 
+# def file_name_to_session_and_channel(file_name, oracle=False):
+#     """
+#     Extract session and channel from file name.
+#     """
+#     if not oracle:
+#         _, _, ovl, _, sil, session, _, _, channel = file_name.split("_")
+#         ovl = int(float(ovl))
+#         if ovl == 0:
+#             if sil == "0.5":
+#                 session = f"0S_{session}"
+#             else:
+#                 session = f"0L_{session}"
+#         else:
+#             session = f"OV{ovl}_{session}"
+#         return session, int(channel)
+#     else:
+#         session, channel = file_name.rsplit("_", 1)
+#         return session, int(channel)
+
+
 def file_name_to_session_and_channel(file_name):
     """
     Extract session and channel from file name.
     """
-    _, _, ovl, _, sil, session, _, _, channel = file_name.split("_")
-    ovl = int(float(ovl))
-    if ovl == 0:
-        if sil == "0.5":
-            session = f"0S_{session}"
-        else:
-            session = f"0L_{session}"
-    else:
-        session = f"OV{ovl}_{session}"
+    session, channel = file_name.rsplit("_", 1)
     return session, int(channel)
 
 

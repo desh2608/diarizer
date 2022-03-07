@@ -5,9 +5,10 @@ stage=0
 . ./utils/parse_options.sh
 
 CORPUS_DIR=/export/c01/corpora6/LibriCSS
-SEPARATED_DIR=/export/c03/zhuc/css
-DATA_DIR=data/libricss_separated
-EXP_DIR=exp/libricss_separated
+SEPARATED_DIR=/export/c03/draj/css_diarization/exp/libricss/out_7ch_conformer_large
+# SEPARATED_DIR=data/libricss_separated_oracle/wav/ # for oracle
+DATA_DIR=data/libricss_separated_v2_multi
+EXP_DIR=exp/libricss_separated_v2_multi
 
 mkdir -p exp
 

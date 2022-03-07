@@ -2,21 +2,21 @@
 stage=0
 
 # VAD Hyperparameters (tuned on session0)
-onset=0.7
-offset=0.3
-min_duration_on=0.3
-min_duration_off=0.6
+onset=0.3
+offset=0.2
+min_duration_on=0.5
+min_duration_off=0.3
 
 . ./path.sh
 . ./utils/parse_options.sh
 
-DATA_DIR=data/libricss_separated
-EXP_DIR=exp/libricss_separated
+DATA_DIR=data/libricss_separated_v2_multi
+EXP_DIR=exp/libricss_separated_v2_multi
 
 mkdir -p exp
 
 if [ $stage -le 0 ]; then
-  for part in dev test; do
+  for part in dev; do
     echo "Running pyannote VAD on ${part}"
     (
     for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
@@ -24,9 +24,9 @@ if [ $stage -le 0 ]; then
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
-      utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/vad/vad_${filename}.log \
-        python diarizer/vad/pyannote_vad.py \
+      utils/queue.pl -l "hostname=c1*\&!c15*" --mem 2G \
+        $EXP_DIR/${part}/log/vad${aligned_affix}/vad_${filename}.log \
+        python diarizer/vad/pyannote_vad.py $aligned_opts \
           --in-dir $DATA_DIR/${part}/audios \
           --file-list exp/list_${filename}.txt \
           --out-dir $EXP_DIR/${part}/vad \
@@ -41,7 +41,7 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  for part in dev test; do
+  for part in dev; do
     echo "Evaluating ${part} VAD output"
     cat $DATA_DIR/${part}/rttm/* > exp/ref.rttm
     > exp/hyp.rttm

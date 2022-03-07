@@ -10,13 +10,13 @@ loopP=0.9
 . ./utils/parse_options.sh
 
 CORPUS_DIR=/export/c01/corpora6/LibriCSS
-DATA_DIR=data/libricss
-EXP_DIR=exp/libricss
+DATA_DIR=data/libricss_separated_v2_multi
+EXP_DIR=exp/libricss_separated_v2_multi
 
 mkdir -p exp
 
 if [ $stage -le 0 ]; then
-  for part in dev test; do
+  for part in dev; do
     echo "Running VBx on ${part} with Fa=$Fa, Fb=$Fb, loopP=$loopP"
     (
     for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
@@ -45,7 +45,7 @@ fi
 
 if [ $stage -le 1 ]; then
   # Combine all RTTM files and score
-  for part in dev test; do
+  for part in dev; do
     cat $DATA_DIR/${part}/rttm/*.rttm > $EXP_DIR/ref.rttm
     cat $EXP_DIR/${part}/vbx/*.rttm > $EXP_DIR/hyp.rttm
     LC_ALL= spyder --per-file $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
