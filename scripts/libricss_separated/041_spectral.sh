@@ -4,13 +4,13 @@ stage=0
 . ./path.sh
 . ./utils/parse_options.sh
 
-DATA_DIR=data/libricss_separated
-EXP_DIR=exp/libricss_separated
+DATA_DIR=data/libricss_separated_v2_multi_doa
+EXP_DIR=exp/libricss_separated_v2_multi_doa
 
 mkdir -p exp
 
 if [ $stage -le 0 ]; then
-  for part in test; do
+  for part in dev; do
     echo "Running spectral clustering on ${part}..."
     (
     while read -r line
@@ -37,10 +37,10 @@ fi
 
 if [ $stage -le 1 ]; then
   # Combine all RTTM files and score
-  for part in test; do
+  for part in dev; do
     cat $DATA_DIR/${part}/rttm/*.rttm > $EXP_DIR/ref.rttm
     cat $EXP_DIR/${part}/spectral/*.rttm > $EXP_DIR/hyp.rttm
-    LC_ALL= spyder --per-file $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
+    LC_ALL= spyder --per-file --regions single $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
   done
 fi
 

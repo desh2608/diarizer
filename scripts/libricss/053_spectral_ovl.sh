@@ -33,10 +33,10 @@ fi
 
 if [ $stage -le 1 ]; then
   # Combine all RTTM files and score
-  for part in dev test; do
+  for part in dev; do
     cat $DATA_DIR/${part}/rttm/*.rttm > $EXP_DIR/ref.rttm
     cat $EXP_DIR/${part}/spectral_ovl/*.rttm > $EXP_DIR/hyp.rttm
-    LC_ALL= spyder --per-file $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
+    LC_ALL= spyder --per-file --regions single $EXP_DIR/ref.rttm $EXP_DIR/hyp.rttm
   done
 fi
 

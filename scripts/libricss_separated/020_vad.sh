@@ -10,8 +10,8 @@ min_duration_off=0.3
 . ./path.sh
 . ./utils/parse_options.sh
 
-DATA_DIR=data/libricss_separated_v2_multi
-EXP_DIR=exp/libricss_separated_v2_multi
+DATA_DIR=data/libricss_separated_v2_multi_doa
+EXP_DIR=exp/libricss_separated_v2_multi_doa
 
 mkdir -p exp
 
