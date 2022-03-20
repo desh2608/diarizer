@@ -97,10 +97,8 @@ def NME_SpectralClustering(
         print("Best number of neighbors is {}".format(pbest))
         num_clusters = num_clusters if num_clusters is not None else (kbest + 1)
         # Handle some edge cases in AMI SDM
-        num_clusters = 4 if num_clusters == 1 else num_clusters
-        return NME_SpectralClustering_sklearn(
-            A, OLVec, num_clusters, pbest
-        )
+        # num_clusters = 4 if num_clusters == 1 else num_clusters
+        return NME_SpectralClustering_sklearn(A, OLVec, num_clusters, pbest)
     if num_clusters is None:
         print("Compute number of clusters to generate:")
         e, g, k, r = ComputeNMEParameters(A, pbest, max_num_clusters)

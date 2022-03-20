@@ -9,6 +9,9 @@ Databases:
   AliMeeting:
     - ../../data/alimeeting/train/audios/{uri}.wav
     - ../../data/alimeeting/eval/audios/{uri}.wav
+  Callhome:
+    - ../../data/callhome/dev/audios_16k/{uri}.wav
+    - ../../data/callhome/test/audios_16k/{uri}.wav
 
 Protocols:
   AMI:
@@ -48,3 +51,14 @@ Protocols:
             uri: exp/pyannote/alimeeting/lists/eval.meetings.txt
             annotation: exp/pyannote/alimeeting/lists/{uri}.rttm
             annotated: exp/pyannote/alimeeting/lists/{uri}.uem
+  Callhome:
+    SpeakerDiarization:
+      only_words:
+        train:
+            uri: exp/pyannote/callhome/lists/dev.meetings.txt
+            annotation: exp/pyannote/callhome/lists/{uri}.rttm
+            annotated: exp/pyannote/callhome/lists/{uri}.uem
+        development:
+            uri: exp/pyannote/callhome/lists/test.meetings.txt
+            annotation: exp/pyannote/callhome/lists/{uri}.rttm
+            annotated: exp/pyannote/callhome/lists/{uri}.uem

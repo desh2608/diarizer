@@ -19,9 +19,12 @@ def read_args():
         "dataset",
         type=str,
         help="Name of dataset",
-        choices=["AMI", "AISHELL-4", "AliMeeting"],
+        choices=["AMI", "AISHELL-4", "AliMeeting", "Callhome"],
     )
     parser.add_argument("exp_dir", type=str, help="Experiment directory")
+    parser.add_argument(
+        "--num-epochs", type=int, default=1, help="Number of epochs for fine-tuning."
+    )
     args = parser.parse_args()
     return args
 
@@ -51,7 +54,7 @@ if __name__ == "__main__":
 
     # Create trainer
     logging.info("Creating trainer")
-    trainer = pl.Trainer(gpus=1, max_epochs=1, default_root_dir=exp_dir)
+    trainer = pl.Trainer(gpus=1, max_epochs=args.num_epochs, default_root_dir=exp_dir)
 
     # Trainer model
     logging.info("Training model")
