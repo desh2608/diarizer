@@ -4,8 +4,8 @@ stage=0
 . ./path.sh
 . ./utils/parse_options.sh
 
-DATA_DIR=data/callhome
-EXP_DIR=exp/callhome
+DATA_DIR=data/callhome_2spk
+EXP_DIR=exp/callhome_2spk
 
 mkdir -p exp
 
@@ -24,7 +24,7 @@ if [ $stage -le 0 ]; then
         python diarizer/xvector/predict.py \
           --gpus true \
           --in-file-list exp/list_${filename}.txt \
-          --in-lab-dir $EXP_DIR/${part}/vad \
+          --in-lab-dir $EXP_DIR/${part}/vad_kaldi \
           --in-wav-dir $DATA_DIR/${part}/audios_8k \
           --out-ark-fn $EXP_DIR/${part}/xvec/${filename}.ark \
           --out-seg-fn $EXP_DIR/${part}/xvec/${filename}.seg \

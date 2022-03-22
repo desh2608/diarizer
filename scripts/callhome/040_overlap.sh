@@ -2,16 +2,16 @@
 stage=0
 
 # Overlap detector Hyperparameters (tuned on dev)
-onset=0.4
-offset=0.3
-min_duration_on=0.4
-min_duration_off=0.4
+onset=0.6
+offset=0.5
+min_duration_on=0.5
+min_duration_off=0.3
 
 . ./path.sh
 . ./utils/parse_options.sh
 
-DATA_DIR=data/callhome
-EXP_DIR=exp/callhome
+DATA_DIR=data/callhome_2spk
+EXP_DIR=exp/callhome_2spk
 
 mkdir -p exp
 
@@ -47,7 +47,7 @@ if [ $stage -le 1 ]; then
       utils/queue.pl -l "hostname=c*" --mem 2G \
         $EXP_DIR/${part}/log/ovl/ovl_${filename}.log \
         python diarizer/overlap/pyannote_overlap.py \
-          --model diarizer/models/pyannote/callhome_epoch0_step194.ckpt \
+          --model diarizer/models/pyannote/callhome_epoch4_step974.ckpt \
           --in-dir $DATA_DIR/${part}/audios_16k \
           --file-list exp/list_${filename}.txt \
           --out-dir $EXP_DIR/${part}/ovl \

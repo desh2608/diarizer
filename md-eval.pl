@@ -2371,32 +2371,32 @@ sub print_sd_scores {
     printf "\n*** Performance analysis for Speaker Diarization for $condition ***\n\n";
 
     printf "    EVAL TIME =%10.2f secs\n", $scores->{EVAL_TIME};
-    printf "  EVAL SPEECH =%10.2f secs (%5.1f percent of evaluated time)\n", $scores->{EVAL_SPEECH},
+    printf "  EVAL SPEECH =%10.2f secs (%5.2f percent of evaluated time)\n", $scores->{EVAL_SPEECH},
         100*$scores->{EVAL_SPEECH}/$scores->{EVAL_TIME};
-    printf "  SCORED TIME =%10.2f secs (%5.1f percent of evaluated time)\n",
+    printf "  SCORED TIME =%10.2f secs (%5.2f percent of evaluated time)\n",
         $scores->{SCORED_TIME}, 100*$scores->{SCORED_TIME}/$scores->{EVAL_TIME};
-    printf "SCORED SPEECH =%10.2f secs (%5.1f percent of scored time)\n",
+    printf "SCORED SPEECH =%10.2f secs (%5.2f percent of scored time)\n",
         $scores->{SCORED_SPEECH}, 100*$scores->{SCORED_SPEECH}/$scores->{SCORED_TIME};
     printf "   EVAL WORDS =%7d        \n", $scores->{EVAL_WORDS};
-    printf " SCORED WORDS =%7d         (%5.1f percent of evaluated words)\n",
+    printf " SCORED WORDS =%7d         (%5.2f percent of evaluated words)\n",
         $scores->{SCORED_WORDS}, 100*$scores->{SCORED_WORDS}/$scores->{EVAL_WORDS};
     print "---------------------------------------------\n";
-    printf "MISSED SPEECH =%10.2f secs (%5.1f percent of scored time)\n",
+    printf "MISSED SPEECH =%10.2f secs (%5.2f percent of scored time)\n",
         $scores->{MISSED_SPEECH}, 100*$scores->{MISSED_SPEECH}/$scores->{SCORED_TIME};
-    printf "FALARM SPEECH =%10.2f secs (%5.1f percent of scored time)\n",
+    printf "FALARM SPEECH =%10.2f secs (%5.2f percent of scored time)\n",
         $scores->{FALARM_SPEECH}, 100*$scores->{FALARM_SPEECH}/$scores->{SCORED_TIME};
-    printf " MISSED WORDS =%7d         (%5.1f percent of scored words)\n",
+    printf " MISSED WORDS =%7d         (%5.2f percent of scored words)\n",
         $scores->{MISSED_WORDS}, 100*$scores->{MISSED_WORDS}/$scores->{SCORED_WORDS};
     print "---------------------------------------------\n";
-    printf "SCORED SPEAKER TIME =%10.2f secs (%5.1f percent of scored speech)\n",
+    printf "SCORED SPEAKER TIME =%10.2f secs (%5.2f percent of scored speech)\n",
         $scores->{SCORED_SPEAKER}, 100*$scores->{SCORED_SPEAKER}/$scores->{SCORED_SPEECH};
-    printf "MISSED SPEAKER TIME =%10.2f secs (%5.1f percent of scored speaker time)\n",
+    printf "MISSED SPEAKER TIME =%10.2f secs (%5.2f percent of scored speaker time)\n",
         $scores->{MISSED_SPEAKER}, 100*$scores->{MISSED_SPEAKER}/$scores->{SCORED_SPEAKER};
-    printf "FALARM SPEAKER TIME =%10.2f secs (%5.1f percent of scored speaker time)\n",
+    printf "FALARM SPEAKER TIME =%10.2f secs (%5.2f percent of scored speaker time)\n",
         $scores->{FALARM_SPEAKER}, 100*$scores->{FALARM_SPEAKER}/$scores->{SCORED_SPEAKER};
-    printf " SPEAKER ERROR TIME =%10.2f secs (%5.1f percent of scored speaker time)\n",
+    printf " SPEAKER ERROR TIME =%10.2f secs (%5.2f percent of scored speaker time)\n",
         $scores->{SPEAKER_ERROR}, 100*$scores->{SPEAKER_ERROR}/$scores->{SCORED_SPEAKER};
-    printf "SPEAKER ERROR WORDS =%7d         (%5.1f percent of scored speaker words)\n",
+    printf "SPEAKER ERROR WORDS =%7d         (%5.2f percent of scored speaker words)\n",
         $scores->{ERROR_WORDS}, 100*$scores->{ERROR_WORDS}/$scores->{SCORED_WORDS};
     print "---------------------------------------------\n";
 #    if ($condition eq "ALL") {

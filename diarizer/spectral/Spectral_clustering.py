@@ -133,7 +133,9 @@ def NME_SpectralClustering_sklearn(A, OLVec, num_clusters, pbest):
         )
     else:
         model = SpectralClustering(
-            n_clusters=num_clusters, affinity="precomputed", random_state=0
+            n_clusters=num_clusters,
+            affinity="precomputed",
+            random_state=0,
         )
     labels = model.fit_predict(Ap)
     return labels

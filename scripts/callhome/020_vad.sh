@@ -10,8 +10,8 @@ min_duration_off=0.3
 . ./path.sh
 . ./utils/parse_options.sh
 
-DATA_DIR=data/callhome
-EXP_DIR=exp/callhome
+DATA_DIR=data/callhome_2spk
+EXP_DIR=exp/callhome_2spk
 
 mkdir -p exp
 
@@ -35,7 +35,7 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  for part in dev test; do
+  for part in dev; do
     echo "Running pyannote VAD on ${part}..."
     (
     for audio in $(ls $DATA_DIR/$part/audios_16k/*.wav | xargs -n 1 basename)
@@ -62,7 +62,7 @@ if [ $stage -le 1 ]; then
 fi
 
 if [ $stage -le 2 ]; then
-  for part in dev test; do
+  for part in dev; do
     echo "Evaluating ${part} VAD output"
     cat $DATA_DIR/${part}/rttm/* > exp/ref.rttm
     > exp/hyp.rttm
@@ -71,7 +71,7 @@ if [ $stage -le 2 ]; then
       awk -v SESSION=${session} \
         '{print "SPEAKER", SESSION, "1", $1, $2-$1, "<NA> <NA> sp <NA> <NA>"}' $x >> exp/hyp.rttm
     done
-    ./md-eval.pl -r exp/ref.rttm -s exp/hyp.rttm |\
+    ./md-eval.pl -r exp/ref.rttm -s exp/hyp.rttm -c 0.25 |\
       awk 'or(/MISSED SPEECH/,/FALARM SPEECH/)'
   done
 fi
