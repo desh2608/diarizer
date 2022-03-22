@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
-# Data preparation for AISHELL-4 dataset.
+# Data preparation for CALLHOME dataset.
 import random
 import urllib
 from pathlib import Path
