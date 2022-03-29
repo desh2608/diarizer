@@ -15,7 +15,7 @@ import tempfile
 import zipfile
 
 MODELS_DIR = "diarizer/models"
-MODELS = ["ResNet101_16kHz"]
+MODELS = ["ResNet101_8kHz"]
 
 
 def install_scripts(directory):
