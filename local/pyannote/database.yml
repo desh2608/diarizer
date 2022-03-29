@@ -9,6 +9,9 @@ Databases:
   AliMeeting:
     - ../../data/alimeeting/train/audios/{uri}.wav
     - ../../data/alimeeting/eval/audios/{uri}.wav
+  FisherSparse:
+    - ../../data/fisher_sparse/dev_16k/audios/{uri}.wav
+    - ../../data/fisher_sparse/test_16k/audios/{uri}.wav
 
 Protocols:
   AMI:
