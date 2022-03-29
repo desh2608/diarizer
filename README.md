@@ -1,15 +1,9 @@
-## Clustering-based Diarization
+## InterSpeech 2022: Baselines for telephone conversation datasets
 
-Python implementations of some clustering-based diarization systems.
-
-### Features
-
-* End-to-end recipes (from unsegmented audio to evaluation) for LibriCSS, AMI, AISHELL-4, and AliMeeting.
-* Using [Lhotse](https://github.com/lhotse-speech/lhotse) for data preparation. 
-* Using [Pyannote 2.0](https://github.com/pyannote/pyannote-audio/tree/develop) models for VAD and overlap detection.
-* Scripts for fine-tuning Pyannote models on AMI, AISHELL-4, and AliMeeting (fine-tuned models also provided).
-* VBx and x-vector extraction from [BUT](https://github.com/BUTSpeechFIT/VBx)'s implementation.
-* [Kaldi](https://github.com/kaldi-asr/kaldi) implementation of overlap-aware spectral clustering.
+This branch contains scripts for reproducing the clustering-based baseline systems
+for the paper: **Leveraging Speech Separation for Conversational Telephone Speaker Diarization**, 
+submitted to InterSpeech 2022. Scripts are provided for the real Fisher and CALLHOME
+datasets.
 
 ### Installation
 
@@ -29,106 +23,48 @@ Once the environment is activated, clone and install the package as:
 > pip install -e . 
 ```
 
-The run scripts additionally use some Kaldi utilities (such as queue.pl or parse_options.sh), 
-since we submit multiple jobs (usually 1 job per audio file). You may need to modify these
-if you are running in a different environment. Alternatively, if you have Kaldi somewhere, 
-you can make a symbolic link to the utils folder as:
+To run the VAD stages, we will additionally need Kaldi. Clone and install Kaldi, and
+then set the `KALDI_ROOT` in path.sh file to your Kaldi location. You would also need
+to create symbolic links to `steps` and `utils` inside the corresponding scripts directory.
 
 ```
+> cd scripts/callhome
 > KALDI_ROOT=/path/to/kaldi
 > ln -s $KALDI_ROOT/egs/wsj/s5/utils .
+> ln -s $KALDI_ROOT/egs/wsj/s5/steps .
 ```
 
 ### Usage
 
 End-to-end runnable recipes are provided in the `scripts` directory. The scripts must be
-invoked from the root directory, for example: `scripts/ami/010_prepare_data.sh` .
+invoked from the root directory, for example: `scripts/callhome/010_prepare_data.sh` .
 
-Each recipe (LibriCSS, AMI, AISHELL-4) contains scripts broken down into stages such as:
+Each recipe (fisher, callhome) contains scripts broken down into stages such as:
 data preparation, VAD, x-vector extraction, overlap detection, and clustering, numbered
 in order as 010, 020, etc. These scripts are supposed to be run in order.
 
 ### Results
 
-* **Voice activity detection (VAD) using Pyannote**
+The following is evaluated using `md-eval.pl` without ignoring overlaps and using a 0.25 collar.
 
-| Method   | MS    | FA | Total   |
-|----------|-------|----|------|
-| LibriCSS | 0.9 | 1.2 | 2.1 | 
-| AMI | 3.5 | 2.8 | 6.3 |
-| AISHELL-4 | 3.3 | 2.3 | 5.6 |
-| AliMeeting | 1.9 | 1.8 | 3.7 |
-
-* **Speaker diarization (using above VAD)**
-
-The following is evaluated using the [spyder](https://github.com/desh2608/spyder) package without ignoring overlaps and using a 0.0 collar.
-
-1. **LibriCSS**
+1. **Fisher**
 
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
-| VBx | 10.37 | 1.19 | 2.96 | 14.52 |
-| VBx + OVL | 3.39 | 2.31 | 5.55 | 11.25 |
-| Spectral | 10.37 | 1.19 | 3.37 | 14.93 |
-| Spectral + OVL | 3.79 | 2.22 | 5.33 | 11.34 |
+| VBx | 8.88 | 0.42 | 0.93 | 10.23 |
+| VBx + OVL | 4.35 | 2.12 | 0.88 | 7.35 |
+| Spectral | 8.88 | 0.42 | 0.22 | 9.52 |
+| Spectral + OVL | 5.19 | 1.99 | 0.18 | 7.36 |
 
-2. **AMI (SDM)**
-
-| Method   | MS    | FA | Conf. | DER   |
-|----------|-------|----|-------|-------|
-| VBx | 18.15 | 3.24 | 4.83 | 26.22 |
-| VBx + OVL | 9.04 | 7.70 | 8.31  | 25.05 |
-| Spectral | 18.15 | 3.24 | 4.14 | 25.53 |
-| Spectral + OVL | 9.63 | 7.39 | 6.67 | 23.69 |
-
-3. **AISHELL-4**
+2. **CALLHOME**
 
 | Method   | MS    | FA | Conf. | DER   |
 |----------|-------|----|-------|-------|
-| VBx | 8.27 | 2.80 | 6.94 | 18.01 |
-| VBx + OVL | 5.78 | 7.88 | 7.96 | 21.62 |
-| Spectral | 8.27 | 2.80 | 5.06 | 16.13 |
-| Spectral + OVL | 5.90 | 7.85 | 5.94 | 19.69 |
-
-4. **AliMeeting** (results are on the official Test set)
-
-| Method   | MS    | FA | Conf. | DER   |
-|----------|-------|----|-------|-------|
-| VBx | 22.09 | 1.57 | 4.27 | 27.93 |
-| VBx + OVL | 11.19 | 4.96 | 7.39 | 23.54 |
-| Spectral | 22.09 | 1.57 | 4.03 | 27.69 |
-| Spectral + OVL | 11.61 | 4.98 | 7.85 | 24.44 |
+| VBx | 8.28 | 0.87 | 2.59 | 11.74 |
+| VBx + OVL | 5.34 | 2.48 | 2.43  | 10.25 |
+| Spectral | 8.28 | 0.87 | 5.31 | 14.46 |
+| Spectral + OVL | 5.70 | 2.67 | 5.76 | 14.13 |
 
 ### Citations
 
-1. **Datasets**
-
-* Chen, Zhuo et al. “Continuous Speech Separation: Dataset and Analysis.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7284-7288.
-
-* McCowan, Iain et al. “The AMI meeting corpus.” (2005).
-
-* Fu, Yihui et al. “AISHELL-4: An Open Source Dataset for Speech Enhancement, Separation, Recognition and Speaker Diarization in Conference Scenario.” ArXiv abs/2104.03603 (2021): n. pag.
-
-* Yu, Fan et al. “M2MeT: The ICASSP 2022 Multi-Channel Multi-Party Meeting Transcription Challenge.” ArXiv abs/2110.07393 (2021).
-
-2. **VAD and Overlap detection**
-
-* Bredin, Hervé et al. “Pyannote. Audio: Neural Building Blocks for Speaker Diarization.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7124-7128.
-
-* Bredin, Hervé and Antoine Laurent. “End-to-end speaker segmentation for overlap-aware resegmentation.” ArXiv abs/2104.04045 (2021): n. pag.
-
-3. **VBx**
-
-* Landini, Federico et al. “Bayesian HMM clustering of x-vector sequences (VBx) in speaker diarization: theory, implementation and analysis on standard tasks.” ArXiv abs/2012.14952 (2020)
-
-4. **VBx with overlaps**
-
-* Bullock, Latané et al. “Overlap-Aware Diarization: Resegmentation Using Neural End-to-End Overlapped Speech Detection.” ICASSP 2020 - 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (2020): 7114-7118.
-
-5. **Spectral clustering**
-
-* Park, Tae Jin et al. “Auto-Tuning Spectral Clustering for Speaker Diarization Using Normalized Maximum Eigengap.” IEEE Signal Processing Letters 27 (2020): 381-385.
-
-6. **Overlap-aware spectral clustering**
-
-* Raj, Desh et al. “Multi-Class Spectral Clustering with Overlaps for Speaker Diarization.” 2021 IEEE Spoken Language Technology Workshop (SLT) (2021): 582-589.
+Will be updated at the time of publication.

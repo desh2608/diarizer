@@ -11,7 +11,7 @@ EXP_DIR=exp/fisher
 mkdir -p exp
 
 if [ $stage -le 0 ]; then
-  for part in test; do
+  for part in dev test; do
     echo "Running spectral clustering on $part..."
     (
     utils/queue.pl --mem 2G JOB=1:$nj $EXP_DIR/$part/log/spectral_ovl/sc.JOB.log \
@@ -29,7 +29,7 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  for part in test; do
+  for part in dev test; do
     echo "Evaluating $part (full)"
     cat $DATA_DIR/$part/rttm/*.rttm > exp/ref.rttm
     cat $EXP_DIR/$part/spectral_ovl/*.rttm > exp/hyp.rttm
