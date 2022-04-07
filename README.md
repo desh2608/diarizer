@@ -67,4 +67,10 @@ The following is evaluated using `md-eval.pl` without ignoring overlaps and usin
 
 ### Citations
 
-Will be updated at the time of publication.
+```
+@inproceedings{Morrone2022LeveragingSS,
+  title={Leveraging Speech Separation for Conversational Telephone Speaker Diarization},
+  author={Giovanni Morrone and Samuele Cornell and Desh Raj and Enrico Zovato and Alessio Brutti and Stefano Squartini},
+  year={2022}
+}
+```
