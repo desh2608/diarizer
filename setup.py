@@ -80,9 +80,12 @@ setup(
         "tabulate>=0.8.6",
         "intervaltree",
         "spy-der==0.2.0",
-        "scikit-learn @ git+https://github.com/desh2608/scikit-learn.git@overlap",
+        "scikit-learn",
         "pyannote.audio @ git+https://github.com/desh2608/pyannote-audio.git@develop",
     ],
+    dependency_links=[
+        "https://github.com/desh2608/scikit-learn/releases/download/v0.24.0-dev-overlap/scikit_learn-0.24.dev0-cp38-cp38-linux_x86_64.whl",
+    ]
     license="Apache License, Version 2.0",
     cmdclass={"install": PostInstallCommand, "develop": PostDevelopCommand},
 )

@@ -7,10 +7,10 @@ offset=0.8
 min_duration_on=0.5
 min_duration_off=0.4
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/AISHELL-4
 DATA_DIR=data/aishell4
 EXP_DIR=exp/aishell4
 
@@ -36,7 +36,7 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
-  for part in test; do
+  for part in dev test; do
     echo "Running overlap detection on $part set..."
     (
     for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
@@ -44,8 +44,7 @@ if [ $stage -le 1 ]; then
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
-      utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/ovl/ovl_${filename}.log \
+      $train_cmd $EXP_DIR/${part}/log/ovl/ovl_${filename}.log \
         python diarizer/overlap/pyannote_overlap.py \
           --model diarizer/models/pyannote/aishell_epoch0_step2150.ckpt \
           --in-dir $DATA_DIR/${part}/audios \

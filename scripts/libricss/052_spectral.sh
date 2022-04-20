@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 stage=0
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/LibriCSS
 DATA_DIR=data/libricss
 EXP_DIR=exp/libricss
 
@@ -18,7 +18,7 @@ if [ $stage -le 0 ]; then
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
 
-      utils/queue.pl --mem 2G -l hostname="!b03*" $EXP_DIR/${part}/log/spectral/spectral_${filename}.log \
+      $train_cmd $EXP_DIR/${part}/log/spectral/spectral_${filename}.log \
         python diarizer/spectral/sclust.py \
             --out-rttm-dir $EXP_DIR/${part}/spectral \
             --xvec-ark-file $EXP_DIR/${part}/xvec/${filename}.ark \

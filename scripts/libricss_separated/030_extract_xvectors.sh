@@ -28,7 +28,7 @@ if [ $stage -le 0 ]; then
       mkdir -p $EXP_DIR/${part}/xvec${aligned_affix}
 
       # run feature and x-vectors extraction
-      utils/retry.pl utils/queue-freegpu.pl -l "hostname=c0*\&!c07*" --gpu 1 --mem 2G \
+      utils/queue-ackgpu.pl -l "hostname=c0*\&!c07*" --gpu 1 --mem 2G \
         $EXP_DIR/${part}/log/xvec${aligned_affix}/xvec_${filename}.log \
         python diarizer/xvector/predict.py \
             --gpus true \

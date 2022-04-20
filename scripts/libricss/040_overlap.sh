@@ -7,10 +7,10 @@ offset=0.7
 min_duration_on=0.4
 min_duration_off=0.5
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/LibriCSS
 DATA_DIR=data/libricss
 EXP_DIR=exp/libricss
 
@@ -25,8 +25,7 @@ if [ $stage -le 4 ]; then
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
-      utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/ovl/ovl_${filename}.log \
+      $train_cmd $EXP_DIR/${part}/log/ovl/ovl_${filename}.log \
         python diarizer/overlap/pyannote_overlap.py \
           --in-dir $DATA_DIR/${part}/audios \
           --file-list exp/list_${filename}.txt \

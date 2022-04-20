@@ -48,6 +48,9 @@ Each recipe (LibriCSS, AMI, AISHELL-4) contains scripts broken down into stages 
 data preparation, VAD, x-vector extraction, overlap detection, and clustering, numbered
 in order as 010, 020, etc. These scripts are supposed to be run in order.
 
+By default, the scripts submit commands through the `queue.pl` script (see `utils` folder). To change
+this behaviour, please modify the `cmd.sh` file according to your job submission system.
+
 ### Results
 
 * **Voice activity detection (VAD) using Pyannote**

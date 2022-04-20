@@ -7,10 +7,10 @@ offset=0.1
 min_duration_on=0.15
 min_duration_off=0.8
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/AISHELL-4
 DATA_DIR=data/aishell4
 EXP_DIR=exp/aishell4
 
@@ -44,8 +44,7 @@ if [ $stage -le 1 ]; then
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
-      utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/vad/vad_${filename}.log \
+      $train_cmd $EXP_DIR/${part}/log/vad/vad_${filename}.log \
         python diarizer/vad/pyannote_vad.py \
           --model diarizer/models/pyannote/aishell_epoch0_step2150.ckpt \
           --in-dir $DATA_DIR/$part/audios \

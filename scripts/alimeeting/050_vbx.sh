@@ -6,10 +6,10 @@ Fa=0.5
 Fb=40
 loopP=0.9
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/AliMeeting
 DATA_DIR=data/alimeeting
 EXP_DIR=exp/alimeeting
 
@@ -23,7 +23,7 @@ if [ $stage -le 0 ]; then
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       
-      utils/queue.pl --mem 2G $EXP_DIR/$part/log/vbx/vb_${filename}.log \
+      $train_cmd $EXP_DIR/$part/log/vbx/vb_${filename}.log \
         python diarizer/vbx/vbhmm.py \
           --init AHC+VB \
           --out-rttm-dir $EXP_DIR/$part/vbx \
@@ -48,7 +48,7 @@ if [ $stage -le 1 ]; then
     echo "Evaluating $part"
     cat $DATA_DIR/$part/rttm/*.rttm > exp/ref.rttm
     cat $EXP_DIR/$part/vbx/*.rttm > exp/hyp.rttm
-    LC_ALL= spyder --per-file exp/ref.rttm exp/hyp.rttm
+    ./md-eval.pl -c 0.25 -r exp/ref.rttm -s exp/hyp.rttm
   done
 fi
 

@@ -6,24 +6,24 @@ Fa=0.5
 Fb=40
 loopP=0.9
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/AISHELL-4
 DATA_DIR=data/aishell4
 EXP_DIR=exp/aishell4
 
 mkdir -p exp
 
 if [ $stage -le 0 ]; then
-  for part in test; do
+  for part in dev test; do
     echo "Running VBx with Fa=$Fa, Fb=$Fb, loopP=$loopP on $part..."
     (
     for audio in $(ls $DATA_DIR/${part}/audios/*.wav | xargs -n 1 basename)
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       
-      utils/queue.pl --mem 2G -l hostname="b1*" $EXP_DIR/$part/log/vbx/vb_${filename}.log \
+      $train_cmd $EXP_DIR/$part/log/vbx/vb_${filename}.log \
         python diarizer/vbx/vbhmm.py \
           --init AHC+VB \
           --out-rttm-dir $EXP_DIR/$part/vbx \

@@ -7,10 +7,10 @@ offset=0.6
 min_duration_on=0.5
 min_duration_off=0.1
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/corpora5/amicorpus
 DATA_DIR=data/ami
 EXP_DIR=exp/ami
 
@@ -35,8 +35,7 @@ if [ $stage -le 1 ]; then
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
-      utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/vad/vad_${filename}.log \
+      $train_cmd $EXP_DIR/${part}/log/vad/vad_${filename}.log \
         python diarizer/vad/pyannote_vad.py \
           --model diarizer/models/pyannote/ami_epoch0_step1791.ckpt \
           --in-dir $DATA_DIR/$part/audios \

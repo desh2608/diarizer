@@ -7,10 +7,10 @@ offset=0.5
 min_duration_on=0.4
 min_duration_off=0.15
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/AliMeeting
 DATA_DIR=data/alimeeting
 EXP_DIR=exp/alimeeting
 
@@ -44,8 +44,7 @@ if [ $stage -le 1 ]; then
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
-      utils/queue.pl -l "hostname=c*" --mem 2G \
-        $EXP_DIR/${part}/log/vad/vad_${filename}.log \
+      $train_cmd $EXP_DIR/${part}/log/vad/vad_${filename}.log \
         python diarizer/vad/pyannote_vad.py \
           --model diarizer/models/pyannote/alimeeting_epoch0_step2492.ckpt \
           --in-dir $DATA_DIR/$part/audios \

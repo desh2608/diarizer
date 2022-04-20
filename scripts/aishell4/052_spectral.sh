@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 stage=0
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/AISHELL-4
 DATA_DIR=data/aishell4
 EXP_DIR=exp/aishell4
 
@@ -18,7 +18,7 @@ if [ $stage -le 0 ]; then
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       
-      utils/queue.pl --mem 2G -l hostname="!c13*" $EXP_DIR/$part/log/spectral/sc_${filename}.log \
+      $train_cmd $EXP_DIR/$part/log/spectral/sc_${filename}.log \
         python diarizer/spectral/sclust.py \
           --out-rttm-dir $EXP_DIR/$part/spectral \
           --xvec-ark-file $EXP_DIR/$part/xvec/${filename}.ark \

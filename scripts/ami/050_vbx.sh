@@ -6,10 +6,10 @@ Fa=0.4
 Fb=64
 loopP=0.65
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/corpora5/amicorpus
 DATA_DIR=data/ami
 EXP_DIR=exp/ami
 
@@ -23,7 +23,7 @@ if [ $stage -le 0 ]; then
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       
-      utils/queue.pl --mem 2G -l "hostname=!c13*" $EXP_DIR/$part/log/vbx/vb_${filename}.log \
+      $train_cmd $EXP_DIR/$part/log/vbx/vb_${filename}.log \
         python diarizer/vbx/vbhmm.py \
           --init AHC+VB \
           --out-rttm-dir $EXP_DIR/$part/vbx \

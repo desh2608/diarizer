@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 stage=0
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/c01/corpora6/AliMeeting
 DATA_DIR=data/alimeeting
 EXP_DIR=exp/alimeeting
 
@@ -18,7 +18,7 @@ if [ $stage -le 0 ]; then
     do
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       
-      utils/queue.pl --mem 2G -l hostname="b1*" $EXP_DIR/$split/log/spectral_ovl/sc_${filename}.log \
+      $train_cmd $EXP_DIR/$split/log/spectral_ovl/sc_${filename}.log \
         python diarizer/spectral/sclust.py \
           --out-rttm-dir $EXP_DIR/$split/spectral_ovl \
           --xvec-ark-file $EXP_DIR/$split/xvec/${filename}.ark \
@@ -36,7 +36,7 @@ if [ $stage -le 1 ]; then
     echo "Evaluating $split"
     cat $DATA_DIR/$split/rttm/*.rttm > exp/ref.rttm
     cat $EXP_DIR/$split/spectral_ovl/*.rttm > exp/hyp.rttm
-    LC_ALL= spyder --per-file exp/ref.rttm exp/hyp.rttm
+    ./md-eval.pl -c 0.25 -r exp/ref.rttm -s exp/hyp.rttm
   done
 fi
 

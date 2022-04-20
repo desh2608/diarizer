@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 stage=0
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
@@ -12,7 +13,7 @@ mkdir -p exp
 
 if [ $stage -le 0 ]; then
   echo "Preparing AliMeeting data..."
-  utils/queue.pl -l "hostname=c*" --mem 2G $EXP_DIR/log/prepare.log \
+  $train_cmd $EXP_DIR/log/prepare.log \
     python local/prepare_alimeeting.py --data-dir $CORPUS_DIR --output-dir $DATA_DIR
 fi
 

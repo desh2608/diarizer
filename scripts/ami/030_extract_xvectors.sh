@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 stage=0
 
+. ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
-CORPUS_DIR=/export/corpora5/amicorpus
 DATA_DIR=data/ami
 EXP_DIR=exp/ami
 
@@ -20,8 +20,7 @@ if [ $stage -le 0 ]; then
       filename=$(echo "${audio}" | cut -f 1 -d '.')
       echo ${filename} > exp/list_${filename}.txt
       
-      utils/retry.pl utils/queue-freegpu.pl -l "hostname=c*" --gpu 1 --mem 2G \
-        $EXP_DIR/${part}/log/xvec/xvec_${filename}.log \
+      $cuda_cmd $EXP_DIR/${part}/log/xvec/xvec_${filename}.log \
         python diarizer/xvector/predict.py \
           --gpus true \
           --in-file-list exp/list_${filename}.txt \
@@ -32,8 +31,6 @@ if [ $stage -le 0 ]; then
           --model ResNet101 \
           --weights diarizer/models/ResNet101_16kHz/nnet/raw_81.pth \
           --backend pytorch &
-      
-      sleep 10
     done
     wait
     )
