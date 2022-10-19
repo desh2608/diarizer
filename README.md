@@ -68,39 +68,39 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 
 1. **LibriCSS**
 
-| Method   | MS    | FA | Conf. | DER   |
-|----------|-------|----|-------|-------|
-| VBx | 10.37 | 1.19 | 2.96 | 14.52 |
-| VBx + OVL | 3.39 | 2.31 | 5.55 | 11.25 |
-| Spectral | 10.37 | 1.19 | 3.37 | 14.93 |
-| Spectral + OVL | 3.79 | 2.22 | 5.33 | 11.34 |
+| Method   | MS    | FA | Conf. | DER   | RTTM |
+|----------|-------|----|-------|-------|------|
+| VBx | 10.37 | 1.19 | 2.96 | 14.52 | [link](rttm/libricss_test_vbx.tar.gz) |
+| VBx + OVL | 3.39 | 2.31 | 5.55 | 11.25 | [link](rttm/libricss_test_vbx_ovl.tar.gz) |
+| Spectral | 10.37 | 1.19 | 3.37 | 14.93 |[link](rttm/libricss_test_spectral.tar.gz) |
+| Spectral + OVL | 3.79 | 2.22 | 5.33 | 11.34 |[link](rttm/libricss_test_spectral_ovl.tar.gz) |
 
 2. **AMI (SDM)**
 
-| Method   | MS    | FA | Conf. | DER   |
-|----------|-------|----|-------|-------|
-| VBx | 18.15 | 3.24 | 4.83 | 26.22 |
-| VBx + OVL | 9.04 | 7.70 | 8.31  | 25.05 |
-| Spectral | 18.15 | 3.24 | 4.14 | 25.53 |
-| Spectral + OVL | 9.63 | 7.39 | 6.67 | 23.69 |
+| Method   | MS    | FA | Conf. | DER   | RTTM |
+|----------|-------|----|-------|-------|------|
+| VBx | 18.15 | 3.24 | 4.83 | 26.22 | [link](rttm/ami_test_vbx.tar.gz) |
+| VBx + OVL | 9.04 | 7.70 | 8.31  | 25.05 | [link](rttm/ami_test_vbx_ovl.tar.gz) |
+| Spectral | 18.15 | 3.24 | 4.14 | 25.53 | [link](rttm/ami_test_spectral.tar.gz) |
+| Spectral + OVL | 9.63 | 7.39 | 6.67 | 23.69 | [link](rttm/ami_test_spectral_ovl.tar.gz) |
 
 3. **AISHELL-4**
 
-| Method   | MS    | FA | Conf. | DER   |
-|----------|-------|----|-------|-------|
-| VBx | 8.27 | 2.80 | 6.94 | 18.01 |
-| VBx + OVL | 5.78 | 7.88 | 7.96 | 21.62 |
-| Spectral | 8.27 | 2.80 | 5.06 | 16.13 |
-| Spectral + OVL | 5.90 | 7.85 | 5.94 | 19.69 |
+| Method   | MS    | FA | Conf. | DER   | RTTM |
+|----------|-------|----|-------|-------|------|
+| VBx | 8.27 | 2.80 | 6.94 | 18.01 | [link](rttm/aishell4_test_vbx.tar.gz) |
+| VBx + OVL | 5.78 | 7.88 | 7.96 | 21.62 | [link](rttm/aishell4_test_vbx_ovl.tar.gz) |
+| Spectral | 8.27 | 2.80 | 5.06 | 16.13 | [link](rttm/aishell4_test_spectral.tar.gz) |
+| Spectral + OVL | 5.90 | 7.85 | 5.94 | 19.69 | [link](rttm/aishell4_test_spectral_ovl.tar.gz) |
 
 4. **AliMeeting** (results are on the official Test set)
 
-| Method   | MS    | FA | Conf. | DER   |
-|----------|-------|----|-------|-------|
-| VBx | 22.09 | 1.57 | 4.27 | 27.93 |
-| VBx + OVL | 11.19 | 4.96 | 7.39 | 23.54 |
-| Spectral | 22.09 | 1.57 | 4.03 | 27.69 |
-| Spectral + OVL | 11.61 | 4.98 | 7.85 | 24.44 |
+| Method   | MS    | FA | Conf. | DER   | RTTM |
+|----------|-------|----|-------|-------|------|
+| VBx | 22.09 | 1.57 | 4.27 | 27.93 | [link](rttm/alimeeting_test_vbx.tar.gz) |
+| VBx + OVL | 11.19 | 4.96 | 7.39 | 23.54 | [link](rttm/alimeeting_test_vbx_ovl.tar.gz) |
+| Spectral | 22.09 | 1.57 | 4.03 | 27.69 | [link](rttm/alimeeting_test_spectral.tar.gz) |
+| Spectral + OVL | 11.61 | 4.98 | 7.85 | 24.44 | [link](rttm/alimeeting_test_spectral_ovl.tar.gz) |
 
 ### Citations
 
