@@ -72,7 +72,7 @@ if [ $stage -le 2 ]; then
       awk -v SESSION=${session} \
         '{print "SPEAKER", SESSION, "1", $1, $2-$1, "<NA> <NA> sp <NA> <NA>"}' $x >> exp/hyp.rttm
     done
-    ./md-eval.pl -r exp/ref.rttm -s exp/hyp.rttm |\
+    ./md-eval.pl -r exp/ref.rttm -s exp/hyp.rttm -c 0.25 |\
       awk 'or(/MISSED SPEECH/,/FALARM SPEECH/)'
   done
 fi

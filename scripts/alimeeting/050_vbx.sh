@@ -48,7 +48,7 @@ if [ $stage -le 1 ]; then
     echo "Evaluating $part"
     cat $DATA_DIR/$part/rttm/*.rttm > exp/ref.rttm
     cat $EXP_DIR/$part/vbx/*.rttm > exp/hyp.rttm
-    ./md-eval.pl -c 0.25 -r exp/ref.rttm -s exp/hyp.rttm
+    ./md-eval.pl -r exp/ref.rttm -s exp/hyp.rttm -c 0.25
   done
 fi
 

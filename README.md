@@ -93,14 +93,14 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 | Spectral | 8.27 | 2.80 | 5.06 | 16.13 | [link](rttm/aishell4_test_spectral.tar.gz) |
 | Spectral + OVL | 5.90 | 7.85 | 5.94 | 19.69 | [link](rttm/aishell4_test_spectral_ovl.tar.gz) |
 
-4. **AliMeeting** (results are on the official Test set)
+4. **AliMeeting** (collar=0.25)
 
 | Method   | MS    | FA | Conf. | DER   | RTTM |
 |----------|-------|----|-------|-------|------|
-| VBx | 22.09 | 1.57 | 4.27 | 27.93 | [link](rttm/alimeeting_test_vbx.tar.gz) |
-| VBx + OVL | 11.19 | 4.96 | 7.39 | 23.54 | [link](rttm/alimeeting_test_vbx_ovl.tar.gz) |
-| Spectral | 22.09 | 1.57 | 4.03 | 27.69 | [link](rttm/alimeeting_test_spectral.tar.gz) |
-| Spectral + OVL | 11.61 | 4.98 | 7.85 | 24.44 | [link](rttm/alimeeting_test_spectral_ovl.tar.gz) |
+| VBx | 13.60 | 0.17 | 3.01 | 16.78 | [link](rttm/alimeeting_test_vbx.tar.gz) |
+| VBx + OVL | 5.87 | 2.82 | 5.36 | 14.05 | [link](rttm/alimeeting_test_vbx_ovl.tar.gz) |
+| Spectral | 13.60 | 0.17 | 2.60 | 16.37 | [link](rttm/alimeeting_test_spectral.tar.gz) |
+| Spectral + OVL | 5.96 | 2.83 | 5.64 | 14.43 | [link](rttm/alimeeting_test_spectral_ovl.tar.gz) |
 
 ### Citations
 
