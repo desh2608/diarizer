@@ -67,9 +67,8 @@ setup(
     packages=find_packages(),
     url="https://github.com/desh2608/diarizer",
     install_requires=[
-        "numpy==1.22.4",
+        "numpy>=1.19.5",
         "scipy==1.4.1",
-        "numexpr==2.6.9",
         "h5py==2.9.0",
         "fastcluster==1.2.4",
         "onnxruntime==1.4.0",
