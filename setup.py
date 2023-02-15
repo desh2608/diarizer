@@ -69,7 +69,6 @@ setup(
     install_requires=[
         "numpy>=1.19.5",
         "scipy==1.4.1",
-        "numexpr==2.6.9",
         "h5py==2.9.0",
         "fastcluster==1.2.4",
         "onnxruntime==1.4.0",
@@ -85,7 +84,7 @@ setup(
     ],
     dependency_links=[
         "https://github.com/desh2608/scikit-learn/releases/download/v0.24.0-dev-overlap/scikit_learn-0.24.dev0-cp38-cp38-linux_x86_64.whl",
-    ]
+    ],
     license="Apache License, Version 2.0",
     cmdclass={"install": PostInstallCommand, "develop": PostDevelopCommand},
 )
