@@ -29,7 +29,7 @@ if [ $stage -le 0 ]; then
           --out-rttm-dir $EXP_DIR/$part/vbx_ovl \
           --xvec-ark-file $EXP_DIR/$part/xvec/${filename}.ark \
           --segments-file $EXP_DIR/$part/xvec/${filename}.seg \
-          --overlap-rttm $EXP_DIR/$split/ovl/${filename}.rttm \
+          --overlap-rttm $EXP_DIR/$part/ovl/${filename}.rttm \
           --xvec-transform diarizer/models/ResNet101_16kHz/transform.h5 \
           --plda-file diarizer/models/ResNet101_16kHz/plda \
           --threshold -0.015 \
