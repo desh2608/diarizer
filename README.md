@@ -135,3 +135,5 @@ The following is evaluated using the [spyder](https://github.com/desh2608/spyder
 6. **Overlap-aware spectral clustering**
 
 * Raj, Desh et al. “Multi-Class Spectral Clustering with Overlaps for Speaker Diarization.” 2021 IEEE Spoken Language Technology Workshop (SLT) (2021): 582-589.
+
+* Raj, Desh et al. "GPU-accelerated Guided Source Separation for Meeting Transcription." InterSpeech 2023.
