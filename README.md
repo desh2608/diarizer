@@ -39,6 +39,8 @@ you can make a symbolic link to the utils folder as:
 > ln -s $KALDI_ROOT/egs/wsj/s5/utils .
 ```
 
+**NOTE**: To run overlap-aware spectral clustering, please install scikit-learn from [my fork](https://github.com/desh2608/scikit-learn/releases/tag/v0.24.0-dev-overlap).
+
 ### Usage
 
 End-to-end runnable recipes are provided in the `scripts` directory. The scripts must be
