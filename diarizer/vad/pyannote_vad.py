@@ -30,6 +30,12 @@ def get_args():
         default="pyannote/segmentation",
         help="Path to the model. If not provided, we use the pretrained model from HuggingFace.",
     )
+    parser.add_argument(
+        "--use-auth-token",
+        type=str,
+        default=None,
+        help="HuggingFace auth token to use the model from HuggingFace.",
+    )
     parser.add_argument("--onset", type=float, default=0.5, help="Onset threshold.")
     parser.add_argument("--offset", type=float, default=0.5, help="Offset threshold.")
     parser.add_argument(
@@ -53,10 +59,12 @@ def get_args():
     return parser.parse_args()
 
 
-def main(in_dir, files, out_dir, HYPER_PARAMETERS):
+def main(args, in_dir, files, out_dir, HYPER_PARAMETERS):
     out_dir.mkdir(exist_ok=True, parents=True)
 
-    vad_pipeline = VoiceActivityDetection(segmentation=args.model, device="cpu")
+    vad_pipeline = VoiceActivityDetection(
+        segmentation=args.model, device="cpu", use_auth_token=args.use_auth_token
+    )
     vad_pipeline.instantiate(HYPER_PARAMETERS)
 
     for file in in_dir.rglob("*.wav"):
@@ -86,4 +94,4 @@ if __name__ == "__main__":
         "min_duration_off": args.min_duration_off,
     }
 
-    main(in_dir, files, out_dir, HYPER_PARAMETERS)
+    main(args, in_dir, files, out_dir, HYPER_PARAMETERS)

@@ -27,3 +27,13 @@ def rttm_to_vad_segments(rttm_file):
             parts = line.split()
             segments.append((float(parts[3]), float(parts[4])))
     return segments
+
+
+def supervision_to_uem_segments(supervision):
+    """
+    Convert a list of Lhotse Supervision objects to a list of UEM segments (recording_id, channel, start, end).
+    """
+    segments = []
+    for s in supervision:
+        segments.append((s.recording_id, s.channel, s.start, s.end))
+    return segments
